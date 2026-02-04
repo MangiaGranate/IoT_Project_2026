@@ -1,0 +1,1 @@
+implementare tutte le funzioni di controllo come l'attuazione dei rele che un ipotetica ML può usare quanto rileva anomalie

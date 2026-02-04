@@ -1,0 +1,5 @@
+implementare le funzioni per simulare la telemetry dei sensori e l'invio dei comandi
+
+es:
+int acquisizione_temperatura()
+int accendi_ventilazione()
