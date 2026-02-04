@@ -6,4 +6,4 @@
   
 - `Diego Bonatti`
 
-- `Sample text`
+- `Ilir Rama`
