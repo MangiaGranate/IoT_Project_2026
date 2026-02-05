@@ -5,7 +5,7 @@ da cui deriveranno tutte quelle specifiche
 """
 
 from Edge.model.device import Device
-import random
+
 
 class Sensor(Device):
     def __init__(self, version, name, id, manufacturer):
