@@ -95,28 +95,48 @@ class SenMLPack:
         
         self.records.append(record)
 
-    def get_list(self):
+    def get_list(self) -> list[dict]:
+        '''
+        Ritorna una lista di dizionari partendo da un oggetto SenMLPack, con ottimizzazione dei record:
+        applicazione delle basi e rimozione dei campi ridondanti.
+        '''
+
         if self.records is None or len(self.records) == 0:
             return None
-        
+
         pack=[]
-        #aggiungiere le basi come primo elemento del pack
-        base_dict = {}
-        for label in ("bn", "bt", "bu", "bver"):
-            value = getattr(self, label, None)
-            if value is not None:
-                base_dict[label] = value
-
-        if base_dict:
-            pack.append(base_dict)
 
 
-        for record in self.records:
+        pack.append({"bn": self.bn, "bt": self.bt, "bu": self.bu, "bver": self.bver})     #aggiungo le basi come primo elemento del pack
+
+        prev_value = None
+        for i in range(0, len(self.records)):
+            record = self.records[i]
+            
+
+            #gestione del nome
             record_dict = record.to_dict()
-            #rimuovere i campi che sono uguali alla base
-            for key in ("bn", "bt", "bu", "bver"):
-                if record_dict.get(key) == base_dict.get(key):
-                    record_dict.pop(key, None)
+            record_dict["n"] = (self.bn or "") + record_dict.get("n", "")
+
+            #gestione dell'unità di misura
+            if record_dict["u"] is None:
+                record_dict["u"] = self.bu
+            
+            #gestione del tempo
+            if record_dict["t"] is None:
+                record_dict["t"] = self.bt
+            elif record_dict["t"] is not None and self.bt is not None:
+                record_dict["t"] -= self.bt
+
+            #gesione del valore
+            for v in ("vb", "v", "vs", "vd"):
+                if v in record_dict:
+                    if prev_value is not None and record_dict[v] == prev_value:
+                        del record_dict[v]
+                    else:
+                        prev_value = record_dict[v]
+                    break
+            
             pack.append(record_dict)
             
         return pack
