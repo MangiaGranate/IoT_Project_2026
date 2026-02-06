@@ -8,6 +8,9 @@
   - [Funzionalità sviluppate](#funzionalità-sviluppate)
   - [Monitoring e soglie](#monitoring-e-soglie)
   - [Simulazione](#simulazione)
+  - [Topic MQTT](#topic-mqtt)
+    - [Wildcards MQTT](#wildcards-mqtt)
+
 ---
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
 
@@ -61,6 +64,46 @@ Il sistema simula un edge device reale:
 - statistiche locali
 - rilevamento anomalie
 - output leggibile e strutturato
+
+## Topic MQTT
+
+Creati i topic MQTT, segue la lista estesa che poi verrà migliorata con l'utilizzo di wildcards.    
+L’EdgeDevice è l’unico componente che comunica con il broker MQTT: pubblica la telemetria dei sensori, gli allarmi e lo stato degli attuatori, mentre si iscrive ai topic dei comandi inviati dal cloud.  
+
+
+
+| Topic / Pattern                               | Purpose                                      | Publisher        | Subscriber(s)     | Notes |
+|-----------------------------------------------|----------------------------------------------|------------------|-------------------|-------|
+| `/device/{id}/telemetry/{sensor}/avg`         | Media valori sensore                         | Edge             | Cloud             | Include timestamp |
+| `/device/{id}/telemetry/{sensor}/min`         | Minimo valori sensore                        | Edge             | Cloud             | Ultimi N valori |
+| `/device/{id}/telemetry/{sensor}/max`         | Massimo valori sensore                       | Edge             | Cloud             | Ultimi N valori |
+| `/device/{id}/alerts/temperature`             | Allarme temperatura fuori soglia             | Edge             | Cloud             | Trigger da monitoring |
+| `/device/{id}/alerts/vibration`               | Allarme vibrazione fuori soglia              | Edge             | Cloud             | Trigger da monitoring |
+| `/device/{id}/alerts/inverter`                | Allarme inverter (anomalia)                  | Edge             | Cloud             | Stato critico |
+| `/device/{id}/commands/inverter`              | Comandi per inverter (start/stop/frequenza)  | Cloud            | Edge              | L’Edge controlla l’attuatore |
+| `/device/{id}/commands/ventilation`           | Comandi per ventola                          | Cloud            | Edge              | Velocità / accensione |
+| `/device/{id}/commands/rele`                  | Comandi per relè                             | Cloud            | Edge              | On/Off |
+| `/device/{id}/status/inverter`                | Stato aggiornato dell’inverter               | Edge             | Cloud             | Pubblicato dopo un comando |
+| `/device/{id}/status/ventilation`             | Stato aggiornato ventola                     | Edge             | Cloud             | Pubblicato dopo un comando |
+| `/device/{id}/status/rele`                    | Stato relè                                   | Edge             | Cloud             | Pubblicato dopo un comando |
+| `/device/{id}/info`                           | Info statiche del dispositivo                | Edge             | Cloud             | Manufacturer, sensori, attuatori |
+
+---
+
+### Wildcards MQTT
+
+| Topic / Pattern                               | Purpose                                      | Publisher        | Subscriber(s)     |
+|-----------------------------------------------|----------------------------------------------|------------------|-------------------|
+| `/device/+/telemetry/*`                       | Telemetria di tutti sensori                  | Edge             | Cloud             |
+| `/device/+/telemetry/{sensor}/*`              | Telemetria dei sensori stessa tipologia      | Edge             | Cloud             |
+| `/device/+/alerts/*`                          | Allarmi per valori fuori soglia              | Edge             | Cloud             |
+| `/device/+/commands/*`                        | Comandi per attuatori                        | Cloud            | Edge              |
+| `/device/+/status/*`                          | Stato aggiornato degli attuatori             | Edge             | Cloud             |
+| `/device/+/info`                              | Informazioni statiche dei dispositivi        | Edge             | Cloud             |
+
+
+
+
 
 ---
 <br><br>
