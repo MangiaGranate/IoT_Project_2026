@@ -2,7 +2,7 @@ import json
 import time
 import uuid
 from datetime import datetime, timezone
-from IoT_Project_2026.Edge.manager.mqtt.mqtt_config import mqtt_conf_params as C
+from IoT_Project_2026.Manager.mqtt.mqtt_conf_params import MqttConfigurationParameters as C
 
 import paho.mqtt.client as mqtt
 
