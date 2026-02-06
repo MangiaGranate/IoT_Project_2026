@@ -5,8 +5,8 @@ per rispecchiare i valori campionati.
 """
 
 import random
-from Edge.model.sensor import Sensor
-from Edge.model.actuator import Actuator
+from IoT_Project_2026.Edge.model.sensor import Sensor
+from IoT_Project_2026.Edge.model.actuator import Actuator
 
 
 class SensTemp(Sensor): 
@@ -40,71 +40,130 @@ class SensInv(Sensor):
 
 
 
+"""
+ATTUATORI CORRETTI e COERENTI con il tuo Actuator generico:
+
+- Actuator (base) ha:
+  - self.state
+  - execute(command) da sovrascrivere
+
+Quindi qui:
+- Relay, Inverter, Ventola OVERRIDE di execute()
+- Ogni execute() aggiorna SEMPRE self.state (dict pronto per JSON/MQTT)
+"""
+
+from typing import Any, Dict, Union
+
+
 class Relay(Actuator):
-    def __init__(self, version, name, id, manufacturer, stato_iniziale=False):
+    def __init__(self, version, name, id, manufacturer, initial_state: bool = False):
         super().__init__(version, name, id, manufacturer)
-        self.is_on = stato_iniziale
+        self.enabled = bool(initial_state)
+        self.state = {"enabled": self.enabled}
 
-    def set(self, on: bool):
-        self.is_on = bool(on)
+    def execute(self, command: Union[bool, Dict[str, Any]]):
+        if isinstance(command, dict):
+            value = command.get("on", command.get("enabled", False))
+            self.enabled = bool(value)
+        else:
+            self.enabled = bool(command)
 
-    def status(self):
-        return {"is_on": self.is_on}
+        self.state = {"enabled": self.enabled}
+
 
 class Inverter(Actuator):
-    def __init__(self, versione, nome, id, produttore,
-                 frequenza_min=0.0, frequenza_max=50.0):
-        super().__init__(versione, nome, id, produttore)
-        self.frequenza_min = float(frequenza_min)
-        self.frequenza_max = float(frequenza_max)
-        self.frequenza_hz = 0.0
-        self.in_marcia = False
+    def __init__(self, version, name, id, manufacturer,
+                 rpm_min: int = 0, rpm_max: int = 3000):
+        super().__init__(version, name, id, manufacturer)
 
-    def imposta(self, in_marcia=None, frequenza_hz=None):
-        # Comando di avvio/arresto
-        if in_marcia is not None:
-            self.in_marcia = bool(in_marcia)
-            if not self.in_marcia:
-                self.frequenza_hz = 0.0
-        if frequenza_hz is not None:
-            f = float(frequenza_hz)
-            f = max(self.frequenza_min, min(self.frequenza_max, f))
-            self.frequenza_hz = f
-            self.in_marcia = self.frequenza_hz > 0.0
+        self.rpm_min = int(rpm_min)
+        self.rpm_max = int(rpm_max)
 
-    def stato(self):
+        self.running = False
+        self.rpm = 0
+
+        self.state = self._current_state()
+
+    def _current_state(self) -> Dict[str, Any]:
         return {
-            "in_marcia": self.in_marcia,
-            "frequenza_hz": self.frequenza_hz,
-            "frequenza_min": self.frequenza_min,
-            "frequenza_max": self.frequenza_max
+            "running": self.running,
+            "rpm": self.rpm,
+            "rpm_min": self.rpm_min,
+            "rpm_max": self.rpm_max
         }
 
-class Ventola(Actuator):
-    def __init__(self, versione, nome, id, produttore, velocita_min=0, velocita_max=100):
-        super().__init__(versione, nome, id, produttore)
-        self.velocita_min = velocita_min
-        self.velocita_max = velocita_max
-        self.velocita_percento = 0
-        self.accesa = False
+    def execute(self, command: Dict[str, Any]):
+        if not isinstance(command, dict):
+            raise ValueError("Inverter.execute() requires a dict (e.g. {'rpm': 1200})")
 
-    def imposta(self, velocita_percento=None, accesa=None):
-        if accesa is not None:
-            self.accesa = bool(accesa)
-            if not self.accesa:
-                self.velocita_percento = 0
+        # Start / Stop command
+        if "running" in command:
+            self.running = bool(command["running"])
+            if not self.running:
+                self.rpm = 0
 
-        if velocita_percento is not None:
-            v = int(velocita_percento)
-            v = max(self.velocita_min, min(self.velocita_max, v))
-            self.velocita_percento = v
-            self.accesa = v > 0
+        # RPM command
+        if "rpm" in command:
+            r = int(command["rpm"])
 
-    def stato(self):
+            # clamp RPM
+            if r < self.rpm_min:
+                r = self.rpm_min
+            elif r > self.rpm_max:
+                r = self.rpm_max
+
+            self.rpm = r
+            self.running = self.rpm > 0
+
+        self.state = self._current_state()
+
+
+class Fan(Actuator):
+    def __init__(self, version, name, id, manufacturer,
+                 speed_min: int = 0, speed_max: int = 100):
+        super().__init__(version, name, id, manufacturer)
+
+        self.speed_min = int(speed_min)
+        self.speed_max = int(speed_max)
+
+        self.enabled = False
+        self.speed_percent = 0
+
+        self.state = self._current_state()
+
+    def _current_state(self) -> Dict[str, Any]:
         return {
-            "accesa": self.accesa,
-            "velocita_percento": self.velocita_percento
+            "enabled": self.enabled,
+            "speed_percent": self.speed_percent,
+            "speed_min": self.speed_min,
+            "speed_max": self.speed_max
         }
+
+    def execute(self, command: Dict[str, Any]):
+        if not isinstance(command, dict):
+            raise ValueError("Fan.execute() requires a dict (e.g. {'speed_percent': 70})")
+
+        # Enable / disable
+        if "enabled" in command:
+            self.enabled = bool(command["enabled"])
+            if not self.enabled:
+                self.speed_percent = 0
+
+        # Speed command
+        if "speed_percent" in command:
+            v = int(command["speed_percent"])
+
+            # clamp speed
+            if v < self.speed_min:
+                v = self.speed_min
+            elif v > self.speed_max:
+                v = self.speed_max
+
+            self.speed_percent = v
+            self.enabled = v > 0
+
+        self.state = self._current_state()
+
 
 
 
