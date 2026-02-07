@@ -17,7 +17,7 @@ class EdgeDevice:
         self.client=None
         for sensor in sensors: 
             self.history[sensor.name]=[] # creazione lista vuota per ogni sensore
-        pass
+
 
 
 
@@ -75,9 +75,9 @@ class EdgeDevice:
         for sensor in self.sensors:
             value=sensor.read()
 
-            payload = {   # unità???????????
-                "sensor": sensor.name,
-                "device_id": sensor.id,
+            payload = {
+                "name": sensor.id,
+                "unit": sensor.unit,
                 "value": value,
                 "timestamp": time.time()
             }

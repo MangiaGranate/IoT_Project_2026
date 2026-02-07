@@ -3,40 +3,46 @@ Creazione classi per ogni sensore/attuatore, aggiornate le funzioni
 per rispecchiare i valori campionati.
 
 """
-# SISTEMARE AGGIORNAMENTO VALORI !!!!!!!!!!!!!!!!
+
 import random
 from model.sensor import Sensor
 from model.actuator import Actuator
 
 
 class SensTemp(Sensor): 
-    def __init__(self, version, name, id, manufacturer, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
         super().__init__(version, name, id, manufacturer)
         self.value=value
+        self.unit=unit
         self.thresholds=thresholds # (40, 80) °C
 
     def read(self):
-        return self.value + random.uniform(-0.5, 0.5)
+        self.value += random.uniform(-0.5, 0.5)
+        return self.value
 
 
 class SensVibr(Sensor): 
-    def __init__(self, version, name, id, manufacturer, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
         super().__init__(version, name, id, manufacturer)
         self.value=value
+        self.unit=unit
         self.thresholds=thresholds # m/s^2 (4.9 , 14.8)
 
     def read(self):
-        return self.value + random.uniform(-0.8, 0.8)
+        self.value += random.uniform(-0.8, 0.8)
+        return self.value
 
 
 class SensInv(Sensor): 
-    def __init__(self, version, name, id, manufacturer, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
         super().__init__(version, name, id, manufacturer)
         self.value=value
+        self.unit=unit
         self.thresholds=thresholds # 500-1000 kg, (3000, 7500) W
         
     def read(self):
-        return self.value + random.uniform(-50, 50)
+        self.value += random.uniform(-50, 50)
+        return self.value
 
 
 
