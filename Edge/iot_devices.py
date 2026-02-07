@@ -52,8 +52,7 @@ Quindi qui:
 - Ogni execute() aggiorna SEMPRE self.state (dict pronto per JSON/MQTT)
 """
 
-from typing import Any, Dict, Union
-
+from typing import Dict, Any
 
 class Relay(Actuator):
     def __init__(self, version, name, id, manufacturer, initial_state: bool = False):
@@ -61,15 +60,13 @@ class Relay(Actuator):
         self.enabled = bool(initial_state)
         self.state = {"enabled": self.enabled}
 
-    def execute(self, command: Union[bool, Dict[str, Any]]):
+    def execute(self, command:Dict[str, Any]):
         if isinstance(command, dict):
             value = command.get("on", command.get("enabled", False))
             self.enabled = bool(value)
         else:
-            self.enabled = bool(command)
-
+            print("is not a dict")
         self.state = {"enabled": self.enabled}
-
 
 class Inverter(Actuator):
     def __init__(self, version, name, id, manufacturer,

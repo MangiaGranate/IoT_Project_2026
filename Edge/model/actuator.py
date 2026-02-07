@@ -4,7 +4,7 @@ da cui deriveranno: Relè, Inverter e Ventilazione.
 """
 
 
-from device import Device
+from IoT_Project_2026.Edge.model.device import Device
 
 class Actuator(Device):
 
