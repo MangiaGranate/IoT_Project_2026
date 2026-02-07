@@ -5,17 +5,17 @@
 - [Contributo di Diego Bonatti](#contributo-di-diego-bonatti)
   - [Classi implementate](#classi-implementate)
   - [Edge Device](#edge-device)
-  - [Funzionalità sviluppate](#funzionalità-sviluppate)
-  - [Monitoring e soglie](#monitoring-e-soglie)
-  - [Simulazione](#simulazione)
-  - [Topic MQTT](#topic-mqtt)
+    - [Funzionalità sviluppate](#funzionalità-sviluppate)
+    - [Monitoring e soglie](#monitoring-e-soglie)
+    - [Simulazione](#simulazione)
+  - [MQTT](#mqtt)
+    - [Topic MQTT](#topic-mqtt)
     - [Wildcards MQTT](#wildcards-mqtt)
-
----
+    - [Comportamento MQTT Edge-Broker](#comportamento-mqtt-edge-broker)
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
-
----
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
+- [Info Gruppo](#info-gruppo)
+
 
 ---
 <br><br>
@@ -43,7 +43,7 @@ Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione l
 - stampa dello stato del sistema
 - ciclo operativo continuo `run()`
 
-## Funzionalità sviluppate
+### Funzionalità sviluppate
 - `read_all()` → lettura simultanea dei sensori e aggiornamento della history  
 - `average()` → calcolo della media degli ultimi N valori  
 - `min_value()` e `max_value()` → statistiche locali  
@@ -51,13 +51,13 @@ Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione l
 - `reset_all_history()` → pulizia della history  
 - gestione della history con rimozione del valore più vecchio
 
-## Monitoring e soglie
+### Monitoring e soglie
 - Implementazione di `monitoring_all()`  
 - Confronto della media con le soglie definite nei sensori  
 - Segnalazione di valori troppo alti o troppo bassi  
 - Identificazione di possibili guasti o anomalie
 
-## Simulazione
+### Simulazione
 Il sistema simula un edge device reale:
 - valori con rumore
 - history limitata
@@ -65,7 +65,9 @@ Il sistema simula un edge device reale:
 - rilevamento anomalie
 - output leggibile e strutturato
 
-## Topic MQTT
+## MQTT
+
+### Topic MQTT
 
 Creati i topic MQTT, segue la lista estesa che poi verrà migliorata con l'utilizzo di wildcards.    
 L’EdgeDevice è l’unico componente che comunica con il broker MQTT: pubblica la telemetria dei sensori, gli allarmi e lo stato degli attuatori, mentre si iscrive ai topic dei comandi inviati dal cloud.  
@@ -74,6 +76,7 @@ L’EdgeDevice è l’unico componente che comunica con il broker MQTT: pubblica
 
 | Topic / Pattern                               | Purpose                                      | Publisher        | Subscriber(s)     | Notes |
 |-----------------------------------------------|----------------------------------------------|------------------|-------------------|-------|
+| `/device/{id}/telemetry/{sensor}/value`       | Misura in un istante sensore                 | Edge             | Cloud             | Include timestamp |
 | `/device/{id}/telemetry/{sensor}/avg`         | Media valori sensore                         | Edge             | Cloud             | Include timestamp |
 | `/device/{id}/telemetry/{sensor}/min`         | Minimo valori sensore                        | Edge             | Cloud             | Ultimi N valori |
 | `/device/{id}/telemetry/{sensor}/max`         | Massimo valori sensore                       | Edge             | Cloud             | Ultimi N valori |
@@ -101,13 +104,37 @@ L’EdgeDevice è l’unico componente che comunica con il broker MQTT: pubblica
 | `/device/+/status/*`                          | Stato aggiornato degli attuatori             | Edge             | Cloud             |
 | `/device/+/info`                              | Informazioni statiche dei dispositivi        | Edge             | Cloud             |
 
-
-
-
-
 ---
+
+### Comportamento MQTT Edge-Broker 
+
+Create le funzioni dell'Edge:
+- `connect_mqtt` → instaura connessione tra Edge e Broker
+  
+- `publish` → permette di pubblicare payload (JSON) in un topic specifico
+
+- `subscribe_commands` → iscrizione dell'Edge a topic per ricezione comandi da cloud
+  
+- `on_message` → callback eseguita quando si riceve un messaggio da un topic a cui si è iscritti
+
+
+
+
+
 <br><br>
 
+
+# Contributo di Luca Fiaccadori
+
+
+<br><br>
+
+# Contributo di Ilir Rama
+
+
+<br><br>
+
+# Info Gruppo
 
 **Componenti gruppo:**
 

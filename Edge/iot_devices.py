@@ -3,10 +3,10 @@ Creazione classi per ogni sensore/attuatore, aggiornate le funzioni
 per rispecchiare i valori campionati.
 
 """
-
+# SISTEMARE AGGIORNAMENTO VALORI
 import random
-from IoT_Project_2026.Edge.model.sensor import Sensor
-from IoT_Project_2026.Edge.model.actuator import Actuator
+from model.sensor import Sensor
+from model.actuator import Actuator
 
 
 class SensTemp(Sensor): 

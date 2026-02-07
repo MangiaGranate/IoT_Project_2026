@@ -4,7 +4,7 @@ da cui deriveranno: Relè, Inverter e Ventilazione.
 """
 
 
-from Edge.model.device import Device
+from device import Device
 
 class Actuator(Device):
 
