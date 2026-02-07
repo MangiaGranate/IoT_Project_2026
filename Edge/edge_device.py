@@ -2,6 +2,7 @@
 import time
 import json
 import paho.mqtt.client as mqtt
+import model.SenML as SenML
 
 
 MAX_HISTORY=10
@@ -29,9 +30,15 @@ class EdgeDevice:
 
 
 
-    def publish(self, topic, payload): #Qui mettere SenML prima dell'invio dei dati !!!!!!!!!!!!!!!!!!!!!
-        msg = json.dumps(payload)
-        self.client.publish(topic, msg)
+    def publish(self, topic, payload): #SenML implementato dell'invio dei dati
+        senml_record = SenML.SenMLRecord(
+            name=payload.get("name", ""),
+            unit=payload.get("unit", ""),
+            value=payload.get("value", 0),
+            time=payload.get("timestamp", time.time()),
+            sum=0
+        )
+        self.client.publish(topic, senml_record.to_json())
 
 
 
