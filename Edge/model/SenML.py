@@ -63,7 +63,7 @@ class SenMLRecord:
 
         out = {}
 
-        for labels in ("bn", "bt", "bu", "bver", "n", "u", "s", "t"):       # le basi di SenML non sono implementate
+        for labels in ("bn", "bt", "bu", "bver", "n", "u", "s", "t"):       
             value = getattr(self, labels, None)
             if value is not None:
                 out[labels] = value
