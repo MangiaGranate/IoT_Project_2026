@@ -4,7 +4,7 @@ da cui deriveranno tutte quelle specifiche
 (temperatura, vibrazione, inverter monitoraggio consumi)
 """
 
-from IoT_Project_2026.Edge.model.device import Device
+from Edge.model.device import Device
 
 
 class Sensor(Device):

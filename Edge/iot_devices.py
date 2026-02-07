@@ -5,8 +5,8 @@ per rispecchiare i valori campionati.
 """
 
 import random
-from model.sensor import Sensor
-from model.actuator import Actuator
+from Edge.model.sensor import Sensor
+from Edge.model.actuator import Actuator
 
 
 class SensTemp(Sensor): 
@@ -166,12 +166,4 @@ class Fan(Actuator):
             self.enabled = v > 0
 
         self.state = self._current_state()
-
-
-
-
-
-
-
-
 
