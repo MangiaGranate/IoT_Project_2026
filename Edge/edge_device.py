@@ -59,12 +59,13 @@ class EdgeDevice:
             return
 
         device_id = parts[1]
-        command = parts[3]
+        command = parts[3] # serve solo se il dispositivo ha più attuatori al suo interno!!! 
 
-        # Chiamare funzione attuatore QUI (device_id, command, payload)  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        ...
-        
 
+        for actuator in self.actuators:
+            if actuator.id==device_id: #id univoco tra tutti i device
+                actuator.execute(payload)
+    
 
 
 
@@ -73,9 +74,16 @@ class EdgeDevice:
 
         for sensor in self.sensors:
             value=sensor.read()
-            
+
+            payload = {   # unità???????????
+                "sensor": sensor.name,
+                "device_id": sensor.id,
+                "value": value,
+                "timestamp": time.time()
+            }
+
             topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value" #topic in cui verrà pubblicato il dato
-            self.publish(topic,value)
+            self.publish(topic,payload)
 
             readings[sensor.name]=value
 
@@ -159,7 +167,7 @@ class EdgeDevice:
             if avg < low or avg > high:
 
                 print("!---- MONITORING ----!\n")
-                print(f"{sensor.name}: media troppo bassa: ({avg})\n")
+                print(f"{sensor.name}: Allerta! Media valori insolita: ({avg})\n")
 
                 #payload d'allerta
                 payload = {  

@@ -3,7 +3,7 @@ Creazione classi per ogni sensore/attuatore, aggiornate le funzioni
 per rispecchiare i valori campionati.
 
 """
-# SISTEMARE AGGIORNAMENTO VALORI
+# SISTEMARE AGGIORNAMENTO VALORI !!!!!!!!!!!!!!!!!!!!!!!!!!
 import random
 from model.sensor import Sensor
 from model.actuator import Actuator
