@@ -12,6 +12,7 @@
     - [Topic MQTT](#topic-mqtt)
     - [Wildcards MQTT](#wildcards-mqtt)
     - [Comportamento MQTT Edge-Broker](#comportamento-mqtt-edge-broker)
+    - [Gestione Comandi MQTT verso Attuatori](#gestione-comandi-mqtt-verso-attuatori)
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
 - [Info Gruppo](#info-gruppo)
@@ -19,6 +20,7 @@
 
 ---
 <br><br>
+
 # Contributo di Diego Bonatti
 
 ## Classi implementate
@@ -34,6 +36,8 @@
   - rumore nella lettura
   - soglie operative (`thresholds`)
 
+---
+
 ## Edge Device
 Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione locale dei dati:
 - acquisizione dei valori da tutti i sensori
@@ -43,6 +47,8 @@ Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione l
 - stampa dello stato del sistema
 - ciclo operativo continuo `run()`
 
+---
+
 ### Funzionalità sviluppate
 - `read_all()` → lettura simultanea dei sensori e aggiornamento della history  
 - `average()` → calcolo della media degli ultimi N valori  
@@ -51,11 +57,15 @@ Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione l
 - `reset_all_history()` → pulizia della history  
 - gestione della history con rimozione del valore più vecchio
 
+---
+
 ### Monitoring e soglie
 - Implementazione di `monitoring_all()`  
 - Confronto della media con le soglie definite nei sensori  
 - Segnalazione di valori troppo alti o troppo bassi  
 - Identificazione di possibili guasti o anomalie
+
+---
 
 ### Simulazione
 Il sistema simula un edge device reale:
@@ -117,8 +127,20 @@ Create le funzioni dell'Edge:
   
 - `on_message` → callback eseguita quando si riceve un messaggio da un topic a cui si è iscritti
 
+---
 
+### Gestione Comandi MQTT verso Attuatori
 
+L’Edge si iscrive ai topic dei comandi provenienti dal cloud e, quando riceve un messaggio, esegue il seguente comportamento:
+
+- `Analizza il topic` per estrarre l’ID del device e il tipo di comando.
+- `Confronta l’ID` con quello degli attuatori registrati nell’Edge.
+- Se trova un attuatore con lo stesso ID, `inoltra il payload` al metodo execute().
+- L’`attuatore elabora il comando` e aggiorna il proprio stato.
+  
+Questo meccanismo permette di indirizzare correttamente i comandi verso il device giusto.
+
+---
 
 
 <br><br>
