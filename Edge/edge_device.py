@@ -29,20 +29,15 @@ class EdgeDevice:
         self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
+        print(f"[MQTT] Connessione a {self.broker}:{self.port}")
 
+    def publish(self, topic, payload):
+        print("\n[PUBLISH] topic =", topic)
+        print("[PUBLISH] payload =", payload)
+        if isinstance(payload, (int, float)):
+            payload = {"value": payload}
 
-
-    def publish(self, topic, payload): #SenML implementato dell'invio dei dati
-        senml_record = SenML.SenMLRecord(
-            name=payload.get("name", ""),
-            unit=payload.get("unit", ""),
-            value=payload.get("value", 0),
-            time=payload.get("timestamp", time.time()),
-            sum=0
-        )
-        self.client.publish(topic, senml_record.to_json())
-
-
+        self.client.publish(topic, json.dumps(payload))
 
     def subscribe_commands(self):
         self.client.subscribe("/device/+/commands/#") # ascolta comandi per QUALSIASI device gestito dall’Edge

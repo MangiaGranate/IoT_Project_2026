@@ -1,5 +1,5 @@
 class MqttConfigurationParameters(object):
-    BROKER_ADDRESS = "155.185.228.20"
+    BROKER_ADDRESS = "155.185.4.4"
     BROKER_PORT = 7883
     MQTT_USERNAME = "<your_username>"
     MQTT_PASSWORD = "<your_password>"
