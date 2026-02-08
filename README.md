@@ -16,6 +16,8 @@
   - [Main](#main)
     - [Flusso di lavoro](#flusso-di-lavoro)
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
+  - [SenML.py](#senmlpy)
+  - [Implementazione SenML.py in edge\_device.py](#implementazione-senmlpy-in-edge_devicepy)
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
 - [Info Gruppo](#info-gruppo)
 
@@ -174,6 +176,17 @@ Creato il main, creati oggetti utilizzando le classi implementate precedentement
 
 
 # Contributo di Luca Fiaccadori
+
+## SenML.py
+Mi sono occupato del modulo SenML che implementa lo standard prima del broker e dopo le funzioni di acquisizione dell'Edge; Il modulo definisce le classi SenMLRecord e SenMLPack con le proprie funzioni
+- funzioni di configurazione per SenMLRecord come _set_value e validate usate solo internamente alla classe
+- funzioni di conversione per i SenMLRecord (to_dict to_json)
+- funzione from_sensor() non utilizzata
+- funzioni di aggiunta di un record al SenMLPack
+- funzioni di ottenimento di una lista a partire da un SenMLPack con ottimizzazione dei record: applicazione delle basi e rimozione dei campi ridondanti
+
+## Implementazione SenML.py in edge_device.py
+il modulo SenML.py viene usato in edge_decive.py (funzione di publish) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
 
 
 <br><br>
