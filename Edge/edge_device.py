@@ -2,7 +2,7 @@
 import time
 import json
 import paho.mqtt.client as mqtt
-import model.SenML as SenML
+import Edge.model.SenML as SenML
 
 
 MAX_HISTORY=10
@@ -11,8 +11,10 @@ class EdgeDevice:
 
 
 
-    def __init__(self, sensors, actuators): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
+    def __init__(self, sensors, actuators, broker, port): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
         self.sensors=sensors
+        self.broker=broker
+        self.port=port
         self.actuators=actuators
         self.history={} # dizionario per i valori acquisiti dai sensori
         self.client=None
@@ -22,10 +24,10 @@ class EdgeDevice:
 
 
 
-    def connect_mqtt(self, broker, port): #specificare ip e porta
+    def connect_mqtt(self): #specificare ip e porta
         self.client = mqtt.Client()
         self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message
-        self.client.connect(broker, port)
+        self.client.connect(self.broker, self.port)
         self.client.loop_start()
 
 
@@ -142,7 +144,7 @@ class EdgeDevice:
             avg = self.average(sensor.name)
             min_v=self.min_value(sensor.name)
             max_v=self.max_value(sensor.name)
-            print(f'{sensor.name}: media={avg}, min={min_v}, max={max_v}\n')
+            print(f'\n{sensor.name}: media={avg}, min={min_v}, max={max_v}\n')
             topic=f'/device/{sensor.id}/telemetry/{sensor.name}'
 
             #Controllo dei valori:
@@ -173,7 +175,7 @@ class EdgeDevice:
 
             if avg < low or avg > high:
 
-                print("!---- MONITORING ----!\n")
+                print("\n!---- MONITORING ----!\n")
                 print(f"{sensor.name}: Allerta! Media valori insolita: ({avg})\n")
 
                 #payload d'allerta
@@ -195,7 +197,7 @@ class EdgeDevice:
     def run(self, delay):
         while True:
             raw=self.read_all()
-            print("----- DATI GREZZI -----\n")
+            print("\n\n\n\n----- DATI GREZZI -----\n")
             print(raw)
             self.print_all_status()
             self.monitoring_all()

@@ -13,6 +13,8 @@
     - [Wildcards MQTT](#wildcards-mqtt)
     - [Comportamento MQTT Edge-Broker](#comportamento-mqtt-edge-broker)
     - [Gestione Comandi MQTT verso Attuatori](#gestione-comandi-mqtt-verso-attuatori)
+  - [Main](#main)
+    - [Flusso di lavoro](#flusso-di-lavoro)
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
 - [Info Gruppo](#info-gruppo)
@@ -141,6 +143,31 @@ L’Edge si iscrive ai topic dei comandi provenienti dal cloud e, quando riceve 
 Questo meccanismo permette di indirizzare correttamente i comandi verso il device giusto.
 
 ---
+
+
+## Main
+
+Creato il main, creati oggetti utilizzando le classi implementate precedentemente.  
+
+### Flusso di lavoro
+
+
+- `Inizializzazione Sensori`
+  
+- `Inizializzazione Attuatori`
+
+- `Configurazione MQTT`
+
+- `Creazione Edge Device`
+
+- `Inizializzazione Connessione`
+
+- `Sottoscrizione Comandi`
+
+- `Avvio Ciclo Operativo`
+
+
+
 
 
 <br><br>
