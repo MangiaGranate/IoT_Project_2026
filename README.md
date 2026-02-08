@@ -186,7 +186,7 @@ Mi sono occupato del modulo SenML che implementa lo standard prima del broker e 
 - funzioni di ottenimento di una lista a partire da un SenMLPack con ottimizzazione dei record: applicazione delle basi e rimozione dei campi ridondanti
 
 ## Implementazione SenML.py in edge_device.py
-il modulo SenML.py viene usato in edge_decive.py (funzione di publish) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
+il modulo SenML.py viene usato in edge_decive.py (funzione di publish_senml) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
 
 
 <br><br>

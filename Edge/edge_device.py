@@ -39,6 +39,27 @@ class EdgeDevice:
 
         self.client.publish(topic, json.dumps(payload))
 
+
+
+    def publish_senml(self, topic, payload):
+        senml_record = SenML.SenMLRecord(
+            name=payload.get("name"),
+            unit=payload.get("unit"),
+            value=payload.get("value"),
+            time=payload.get("timestamp"),
+            sum=0
+        )
+        senml_record = senml_record.to_json()
+        print("\n[PUBLISH] topic =", topic)
+        print("[PUBLISH] payload (SenML) =", senml_record)
+        self.client.publish(topic, senml_record)
+
+
+
+
+
+
+
     def subscribe_commands(self):
         self.client.subscribe("/device/+/commands/#") # ascolta comandi per QUALSIASI device gestito dall’Edge
 
@@ -87,7 +108,7 @@ class EdgeDevice:
             }
 
             topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value" #topic in cui verrà pubblicato il dato
-            self.publish(topic,payload)
+            self.publish_senml(topic,payload)
 
             readings[sensor.name]=value
 

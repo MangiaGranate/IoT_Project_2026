@@ -8,7 +8,7 @@ from Edge.edge_device import EdgeDevice
 def main():
 
     sensors = [
-            SensTemp(version="1.0", name="temperature", id="dev001", manufacturer="ACME", unit="°C", value=25.0, thresholds=(40, 80)),
+            SensTemp(version="1.0", name="temperature", id="dev001", manufacturer="ACME", unit="Cel", value=25.0, thresholds=(40, 80)),
             SensVibr(version="1.0", name="vibration", id="dev002", manufacturer="ACME", unit="m/s^2", value=5.0, thresholds=(4.9, 14.8)),
             SensInv(version="1.0", name="inverter", id="dev003", manufacturer="ACME", unit="W", value=3000, thresholds=(3000, 7500))
         ]

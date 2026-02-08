@@ -46,8 +46,8 @@ class SenMLRecord:
 
     def validate(self):
         #validare un SenMLRecord
-        if self.n is None and self.bn is None:
-            raise ValueError("Serve almeno n o bn")
+        if self.n is None:
+            raise ValueError("Serve almeno n")
 
         if self._value is None:
             raise ValueError("Record SenML senza valore")
