@@ -21,7 +21,8 @@ class ManagerConsumer:
 
     def on_message(self, client, userdata, msg):
         # chiamata quando il client riceve un messaggio
-        ...
+        print(f"[MQTT - Manager] Ricevuto messaggio sul topic {msg.topic}: {msg.payload.decode()}")
+        
 
 
 
@@ -44,6 +45,10 @@ class ManagerConsumer:
             print(f"[MQTT - Manager] Errore durante la connessione al broker: {e}")
 
     def subscribe_contents(self, topics: List[str]):
+        if self.client is None:
+            print("[MQTT - Manager] Errore: client MQTT non connesso.")
+            return
+        
         for topic in topics:
             self.client.subscribe(topic)
             print(f"[MQTT - Manager] Sottoscrizione al topic: {topic}")
