@@ -2,9 +2,11 @@ from database_manager import DatabaseManager
 import random
 import time
 
+''' da runnare per debug, non serve nel funzionamento del progetto'''
+
 def main():
     
-    DBM = DatabaseManager("data_analysis.db")
+    DBM = DatabaseManager("data_analisys.db")
     DBM.delete_database_file()
     DBM.connect()
     

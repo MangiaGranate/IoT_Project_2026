@@ -8,7 +8,8 @@ def main():
         broker=MqttConf.BROKER_ADDRESS,
         port=MqttConf.BROKER_PORT,
         username=MqttConf.MQTT_USERNAME,
-        passwd=MqttConf.MQTT_PASSWORD
+        passwd=MqttConf.MQTT_PASSWORD,
+        database_name="data_analisys.db"
     )
 
     manager.connetc_mqtt()
@@ -22,7 +23,11 @@ def main():
     ])
 
 
-
+    while(True):
+        try:
+            pass
+        except KeyboardInterrupt:
+            print("Chiusura Manager...")
 
     manager.client.loop_stop()
     manager.client.disconnect()
