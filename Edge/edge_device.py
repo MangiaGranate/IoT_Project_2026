@@ -23,6 +23,11 @@ class EdgeDevice:
 
 
 
+    def time_convert(self, actual_time):
+        readable = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(actual_time))
+        return readable
+
+
 
     def connect_mqtt(self): #specificare ip e porta
         self.client = mqtt.Client()
@@ -77,18 +82,20 @@ class EdgeDevice:
         # Parsing del topic
         parts = topic.split("/")
         # /device/<id>/commands/<command>
-        #  0      1     2         3
+        #  1      2     3         4
 
         if len(parts) < 4: # Controllo Topic
             print("Topic comando non valido")
             return
 
-        device_id = parts[1]
-        command = parts[3] # serve solo se il dispositivo ha più attuatori al suo interno!!! 
+        device_id = parts[2]
+        print(f"\nQUESTO è IL DEVICE ID: {device_id}\n")
+        command = parts[4] # serve solo se il dispositivo ha più attuatori al suo interno!!! 
 
 
         for actuator in self.actuators:
-            if actuator.id==device_id: #id univoco tra tutti i device
+            print("\n STO CONTROLLANDO L'IDDDDDDDDDDDDDDDDDDDDDDDDDD\n")
+            if str(actuator.id)==str(device_id): #id univoco tra tutti i device
                 actuator.execute(payload)
     
 
@@ -104,7 +111,7 @@ class EdgeDevice:
                 "name": sensor.id,
                 "unit": sensor.unit,
                 "value": value,
-                "timestamp": time.time()
+                "timestamp": self.time_convert(time.time())
             }
 
             topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value" #topic in cui verrà pubblicato il dato
@@ -121,27 +128,42 @@ class EdgeDevice:
     
 
 
-    def min_value(self, sensor_name):
-        values=self.history[sensor_name]
+    def min_value(self, sensor):
+        values=self.history[sensor.name]
         if values:
-            return min(values)
+            min_val=min(values)
+            payload = {
+                "name": sensor.id,
+                "unit": sensor.unit,
+                "value": min_val,
+                "timestamp": self.time_convert(time.time())
+            }
+            return payload
+        
         else:
             return None
 
 
 
-    def max_value(self, sensor_name):
-        values=self.history[sensor_name]
+    def max_value(self, sensor):
+        values=self.history[sensor.name]
         if values:
-            return max(values)
+            max_val=max(values)
+            payload = {
+                "name": sensor.id,
+                "unit": sensor.unit,
+                "value": max_val,
+                "timestamp": self.time_convert(time.time())
+            }
+            return payload
         else:
             return None
 
 
 
-    def average(self, sensor_name):
+    def average(self, sensor):
         total=0
-        values=self.history[sensor_name]
+        values=self.history[sensor.name]
 
         if len(values)==0:
             return None
@@ -150,16 +172,23 @@ class EdgeDevice:
             total+=value 
 
         avg=total/len(values)
+        
+        payload = {
+            "name": sensor.id,
+            "unit": sensor.unit,
+            "value": avg,
+            "timestamp": self.time_convert(time.time())
+        }
 
 
-        return avg
+        return payload
 
 
     def print_all_status(self):
         for sensor in self.sensors:
-            avg = self.average(sensor.name)
-            min_v=self.min_value(sensor.name)
-            max_v=self.max_value(sensor.name)
+            avg = self.average(sensor)
+            min_v=self.min_value(sensor)
+            max_v=self.max_value(sensor)
             print(f'\n{sensor.name}: media={avg}, min={min_v}, max={max_v}\n')
             topic=f'/device/{sensor.id}/telemetry/{sensor.name}'
 
@@ -183,13 +212,13 @@ class EdgeDevice:
 
     def monitoring_all(self):
         for sensor in self.sensors:
-            avg=self.average(sensor.name)
+            avg=self.average(sensor)
             if avg is None:
                 continue # non interrompe la funzione, passa al sensore successivo (a differenza di return!)
             
             low, high = sensor.thresholds
 
-            if avg < low or avg > high:
+            if avg["value"] < low or avg["value"] > high:
 
                 print("\n!---- MONITORING ----!\n")
                 print(f"{sensor.name}: Allerta! Media valori insolita: ({avg})\n")
@@ -202,7 +231,7 @@ class EdgeDevice:
                     "value": avg,
                     "threshold_low": low,
                     "threshold_high": high,
-                    "timestamp": time.time() #orario del dispositivo
+                    "timestamp": self.time_convert(time.time()) #orario del dispositivo
                 }
 
                 topic=f'/device/{sensor.id}/alerts/{sensor.name}'

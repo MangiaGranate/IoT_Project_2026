@@ -8,6 +8,7 @@
     - [Funzionalità sviluppate](#funzionalità-sviluppate)
     - [Monitoring e soglie](#monitoring-e-soglie)
     - [Simulazione](#simulazione)
+    - [Payload](#payload)
   - [MQTT](#mqtt)
     - [Topic MQTT](#topic-mqtt)
     - [Wildcards MQTT](#wildcards-mqtt)
@@ -78,6 +79,21 @@ Il sistema simula un edge device reale:
 - statistiche locali
 - rilevamento anomalie
 - output leggibile e strutturato
+
+---
+
+### Payload
+Creati i payload per telemetria dei sensori standardizzati.  
+Creata funzione per rendere leggibile il formato della data, utilizzata nei payload.
+
+```
+payload = {
+  "name": sensor.id,
+  "unit": sensor.unit,
+  "value": value,
+  "timestamp": self.time_convert(time.time())
+}
+```
 
 ## MQTT
 
