@@ -14,10 +14,12 @@ class EdgeDevice:
 
 
 
-    def __init__(self, sensors, actuators, broker, port): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
+    def __init__(self, sensors, actuators, broker, port, username, passwd): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
         self.sensors=sensors
         self.broker=broker
         self.port=port
+        self.username=username
+        self.passwd=passwd
         self.actuators=actuators
         self.history={} # dizionario per i valori acquisiti dai sensori
         self.client=None
@@ -30,6 +32,7 @@ class EdgeDevice:
     def connect_mqtt(self): #specificare ip e porta
         self.client = mqtt.Client()
         self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message
+        self.client.username_pw_set(self.username, self.passwd) 
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
         print(f"[MQTT] Connessione a {self.broker}:{self.port}")

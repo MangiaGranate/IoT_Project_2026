@@ -1,7 +1,7 @@
 
 from Edge.iot_devices import *
-from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
-#from Manager.mqtt.mqtt_conf_params import MqttConfigurationParameters as MqttConf
+#from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+from Manager.mqtt.mqtt_conf_params import MqttConfigurationParameters as MqttConf
 from Edge.edge_device import EdgeDevice
 
 
@@ -24,7 +24,9 @@ def main():
         sensors=sensors,
         actuators=actuators,
         broker=MqttConf.BROKER_ADDRESS,
-        port=MqttConf.BROKER_PORT
+        port=MqttConf.BROKER_PORT,
+        username=MqttConf.MQTT_USERNAME,
+        passwd=MqttConf.MQTT_PASSWORD
     )
 
 
