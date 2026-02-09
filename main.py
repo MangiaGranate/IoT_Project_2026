@@ -25,9 +25,8 @@ def main():
         actuators=actuators,
         broker=MqttConf.BROKER_ADDRESS,
         port=MqttConf.BROKER_PORT,
-        username=MqttConf.BROKER_USERNAME,
-        passwd=MqttConf.BROKER_PASSWORD
-
+        username=MqttConf.MQTT_USERNAME,
+        passwd=MqttConf.MQTT_PASSWORD
     )
 
 
