@@ -127,11 +127,11 @@ L’EdgeDevice è l’unico componente che comunica con il broker MQTT: pubblica
 
 | Topic / Pattern                               | Purpose                                      | Publisher        | Subscriber(s)     |
 |-----------------------------------------------|----------------------------------------------|------------------|-------------------|
-| `/device/+/telemetry/*`                       | Telemetria di tutti sensori                  | Edge             | Cloud             |
-| `/device/+/telemetry/{sensor}/*`              | Telemetria dei sensori stessa tipologia      | Edge             | Cloud             |
-| `/device/+/alerts/*`                          | Allarmi per valori fuori soglia              | Edge             | Cloud             |
-| `/device/+/commands/*`                        | Comandi per attuatori                        | Cloud            | Edge              |
-| `/device/+/status/*`                          | Stato aggiornato degli attuatori             | Edge             | Cloud             |
+| `/device/+/telemetry/#`                       | Telemetria di tutti sensori                  | Edge             | Cloud             |
+| `/device/+/telemetry/{sensor}/#`              | Telemetria dei sensori stessa tipologia      | Edge             | Cloud             |
+| `/device/+/alerts/#`                          | Allarmi per valori fuori soglia              | Edge             | Cloud             |
+| `/device/+/commands/#`                        | Comandi per attuatori                        | Cloud            | Edge              |
+| `/device/+/status/#`                          | Stato aggiornato degli attuatori             | Edge             | Cloud             |
 | `/device/+/info`                              | Informazioni statiche dei dispositivi        | Edge             | Cloud             |
 
 ---

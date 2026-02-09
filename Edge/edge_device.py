@@ -2,12 +2,16 @@ import time
 import json
 import paho.mqtt.client as mqtt
 import Edge.model.SenML as SenML
+<<<<<<< HEAD
 
 MAX_HISTORY = 10
 
+=======
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
 class EdgeDevice:
 
+<<<<<<< HEAD
     def __init__(self, sensors, actuators, broker,
                  port):  # lista dei sensori, per poter leggere tutti i dati & lista attuatori
         self.sensors = sensors
@@ -18,6 +22,21 @@ class EdgeDevice:
         self.client = None
         for sensor in sensors:
             self.history[sensor.name] = []  # creazione lista vuota per ogni sensore
+=======
+
+
+    def __init__(self, sensors, actuators, broker, port): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
+        self.sensors=sensors
+        self.broker=broker
+        self.port=port
+        self.actuators=actuators
+        self.history={} # dizionario per i valori acquisiti dai sensori
+        self.client=None
+        for sensor in sensors: 
+            self.history[sensor.name]=[] # creazione lista vuota per ogni sensore
+
+
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
     def time_convert(self, actual_time):
         readable = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(actual_time))
@@ -25,7 +44,11 @@ class EdgeDevice:
 
     def connect_mqtt(self):  # specificare ip e porta
         self.client = mqtt.Client()
+<<<<<<< HEAD
         self.client.on_message = self.on_message  # quando arriva un messaggio chiama la funzione on_message
+=======
+        self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
         print(f"[MQTT] Connessione a {self.broker}:{self.port}")
@@ -54,6 +77,7 @@ class EdgeDevice:
     def subscribe_commands(self):
         self.client.subscribe("/device/+/commands/#")  # ascolta comandi per QUALSIASI device gestito dall’Edge
 
+<<<<<<< HEAD
     def on_message(self, client, userdata, msg):  # chiamata ogni volta che arriva un comando MQTT (callback)
         topic = msg.topic
         payload = msg.payload.decode()
@@ -61,18 +85,36 @@ class EdgeDevice:
         print(f"[MQTT] Comando ricevuto:")
         print(f"  Topic: {topic}")
         print(f"  Payload: {payload}")
+=======
+
+
+
+    def on_message(self, client, userdata, msg): # chiamata ogni volta che arriva un comando MQTT (callback)
+        topic = msg.topic
+        payload = msg.payload.decode()
+        payload_dict = json.loads(payload)
+
+        print(f"[MQTT] Comando ricevuto:")
+        print(f"  Topic: {topic}")
+        print(f"  Payload: {payload_dict}")
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
         # Parsing del topic
         parts = topic.split("/")
         # /device/<id>/commands/<command>
         #  1      2     3         4
 
+<<<<<<< HEAD
         if len(parts) < 4:  # Controllo Topic
+=======
+        if len(parts) < 4: # Controllo Topic
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
             print("Topic comando non valido")
             return
 
         device_id = parts[2]
         print(f"\nQUESTO è IL DEVICE ID: {device_id}\n")
+<<<<<<< HEAD
         command = parts[4]  # serve solo se il dispositivo ha più attuatori al suo interno!!!
 
         for actuator in self.actuators:
@@ -85,6 +127,25 @@ class EdgeDevice:
 
         for sensor in self.sensors:
             value = sensor.read()
+=======
+        command = parts[4] # serve solo se il dispositivo ha più attuatori al suo interno!!! 
+
+
+        for actuator in self.actuators:
+            print("\n STO CONTROLLANDO L'IDDDDDDDDDDDDDDDDDDDDDDDDDD\n")
+            if str(actuator.id)==str(device_id): #id univoco tra tutti i device
+                print(f"\n\nQuesto è il PAYLOAD: {payload_dict}\n\n")
+                actuator.execute(payload_dict)
+    
+
+
+
+    def read_all(self):
+        readings={} # dizionario per valori in un singolo istante
+
+        for sensor in self.sensors:
+            value=sensor.read()
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
             payload = {
                 "name": sensor.id,
@@ -93,18 +154,31 @@ class EdgeDevice:
                 "timestamp": self.time_convert(time.time())
             }
 
+<<<<<<< HEAD
             topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value"  # topic in cui verrà pubblicato il dato
             self.publish_senml(topic, payload)
+=======
+            topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value" #topic in cui verrà pubblicato il dato
+            self.publish_senml(topic,payload)
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
-            readings[sensor.name] = value
+            readings[sensor.name]=value
 
+<<<<<<< HEAD
             self.history[sensor.name].append(value)  # salvataggio valore nella history
 
             if len(self.history[
                        sensor.name]) > MAX_HISTORY:  # se la lista supera una soglia ==> il valore più vecchio viene eliminato
+=======
+            self.history[sensor.name].append(value) # salvataggio valore nella history
+
+            if len(self.history[sensor.name]) > MAX_HISTORY: # se la lista supera una soglia ==> il valore più vecchio viene eliminato
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
                 self.history[sensor.name].pop(0)
 
         return readings
+    
+
 
     def min_value(self, sensor):
         values = self.history[sensor.name]
@@ -212,4 +286,8 @@ class EdgeDevice:
             self.print_all_status()
             self.monitoring_all()
             print("\n==============================\n")
+<<<<<<< HEAD
             time.sleep(delay)
+=======
+            time.sleep(delay)
+>>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576

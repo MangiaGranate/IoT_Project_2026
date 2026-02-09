@@ -67,6 +67,7 @@ class Relay(Actuator):
         self.state = {"enabled": self.enabled}
 
     def execute(self, command:Dict[str, Any]):
+        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
         if isinstance(command, dict):
             value = command.get("on", command.get("enabled", False))
             self.enabled = bool(value)
@@ -96,6 +97,7 @@ class Inverter(Actuator):
         }
 
     def execute(self, command: Dict[str, Any]):
+        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
         if not isinstance(command, dict):
             raise ValueError("Inverter.execute() requires a dict (e.g. {'rpm': 1200})")
 
@@ -143,6 +145,7 @@ class Fan(Actuator):
         }
 
     def execute(self, command: Dict[str, Any]):
+        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
         if not isinstance(command, dict):
             raise ValueError("Fan.execute() requires a dict (e.g. {'speed_percent': 70})")
 
