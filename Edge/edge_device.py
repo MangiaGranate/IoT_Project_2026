@@ -2,53 +2,36 @@ import time
 import json
 import paho.mqtt.client as mqtt
 import Edge.model.SenML as SenML
-<<<<<<< HEAD
 
 MAX_HISTORY = 10
 
-=======
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
 class EdgeDevice:
-
-<<<<<<< HEAD
-    def __init__(self, sensors, actuators, broker,
-                 port):  # lista dei sensori, per poter leggere tutti i dati & lista attuatori
+    def __init__(self, sensors, actuators, broker, port):
+        # lista sensori/attuatori + parametri broker
         self.sensors = sensors
+        self.actuators = actuators
         self.broker = broker
         self.port = port
-        self.actuators = actuators
-        self.history = {}  # dizionario per i valori acquisiti dai sensori
+
+        # history per ciascun sensore (chiave = sensor.name)
+        self.history = {sensor.name: [] for sensor in sensors}
+
         self.client = None
-        for sensor in sensors:
-            self.history[sensor.name] = []  # creazione lista vuota per ogni sensore
-=======
 
-
-    def __init__(self, sensors, actuators, broker, port): # lista dei sensori, per poter leggere tutti i dati & lista attuatori
-        self.sensors=sensors
-        self.broker=broker
-        self.port=port
-        self.actuators=actuators
-        self.history={} # dizionario per i valori acquisiti dai sensori
-        self.client=None
-        for sensor in sensors: 
-            self.history[sensor.name]=[] # creazione lista vuota per ogni sensore
-
-
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
-
+    # -------------------------
+    # UTILS
+    # -------------------------
     def time_convert(self, actual_time):
-        readable = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(actual_time))
-        return readable
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(actual_time))
 
-    def connect_mqtt(self):  # specificare ip e porta
+    # -------------------------
+    # MQTT
+    # -------------------------
+    def connect_mqtt(self):
+        # Se usi paho-mqtt 2.x e ti dà errori di callback version, dimmelo e lo adatto.
         self.client = mqtt.Client()
-<<<<<<< HEAD
-        self.client.on_message = self.on_message  # quando arriva un messaggio chiama la funzione on_message
-=======
-        self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
+        self.client.on_message = self.on_message
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
         print(f"[MQTT] Connessione a {self.broker}:{self.port}")
@@ -56,197 +39,161 @@ class EdgeDevice:
     def publish(self, topic, payload):
         print("\n[PUBLISH] topic =", topic)
         print("[PUBLISH] payload =", payload)
+
+        # normalizza payload
         if isinstance(payload, (int, float)):
             payload = {"value": payload}
 
         self.client.publish(topic, json.dumps(payload))
 
     def publish_senml(self, topic, payload):
+        # payload atteso: {name, unit, value, timestamp}
         senml_record = SenML.SenMLRecord(
             name=payload.get("name"),
             unit=payload.get("unit"),
             value=payload.get("value"),
             time=payload.get("timestamp"),
             sum=0
-        )
-        senml_record = senml_record.to_json()
+        ).to_json()
+
         print("\n[PUBLISH] topic =", topic)
         print("[PUBLISH] payload (SenML) =", senml_record)
         self.client.publish(topic, senml_record)
 
     def subscribe_commands(self):
-        self.client.subscribe("/device/+/commands/#")  # ascolta comandi per QUALSIASI device gestito dall’Edge
+        # ascolta comandi per QUALSIASI device gestito dall’Edge
+        self.client.subscribe("/device/+/commands/#")
+        print("[MQTT] Subscribe a /device/+/commands/#")
 
-<<<<<<< HEAD
-    def on_message(self, client, userdata, msg):  # chiamata ogni volta che arriva un comando MQTT (callback)
+    def on_message(self, client, userdata, msg):
         topic = msg.topic
-        payload = msg.payload.decode()
-        payload_dict = json.loads(payload)
-        print(f"[MQTT] Comando ricevuto:")
-        print(f"  Topic: {topic}")
-        print(f"  Payload: {payload}")
-=======
+        raw_payload = msg.payload.decode()
 
+        try:
+            payload_dict = json.loads(raw_payload) if raw_payload else {}
+        except json.JSONDecodeError:
+            print("[MQTT] Payload non JSON, ignoro:", raw_payload)
+            return
 
-
-    def on_message(self, client, userdata, msg): # chiamata ogni volta che arriva un comando MQTT (callback)
-        topic = msg.topic
-        payload = msg.payload.decode()
-        payload_dict = json.loads(payload)
-
-        print(f"[MQTT] Comando ricevuto:")
+        print(f"\n[MQTT] Comando ricevuto:")
         print(f"  Topic: {topic}")
         print(f"  Payload: {payload_dict}")
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
-        # Parsing del topic
+        # Topic atteso: /device/<id>/commands/<command>[/...]
         parts = topic.split("/")
-        # /device/<id>/commands/<command>
-        #  1      2     3         4
-
-<<<<<<< HEAD
-        if len(parts) < 4:  # Controllo Topic
-=======
-        if len(parts) < 4: # Controllo Topic
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
-            print("Topic comando non valido")
+        # Esempio: ["", "device", "<id>", "commands", "<command>"]
+        if len(parts) < 5 or parts[1] != "device" or parts[3] != "commands":
+            print("[MQTT] Topic comando non valido")
             return
 
         device_id = parts[2]
-        print(f"\nQUESTO è IL DEVICE ID: {device_id}\n")
-<<<<<<< HEAD
-        command = parts[4]  # serve solo se il dispositivo ha più attuatori al suo interno!!!
+        command = parts[4]  # se vuoi usarlo dentro execute, puoi metterlo nel payload
 
+        # opzionale: aggiungo command nel payload così l'attuatore lo vede
+        payload_dict.setdefault("command", command)
+
+        found = False
         for actuator in self.actuators:
-            print("\n STO CONTROLLANDO L'IDDDDDDDDDDDDDDDDDDDDDDDDDD\n")
-            if str(actuator.id) == str(device_id):  # id univoco tra tutti i device
-                actuator.execute(payload_dict)
+            if str(actuator.id) == str(device_id):
+                found = True
+                try:
+                    actuator.execute(payload_dict)
+                except Exception as e:
+                    print(f"[MQTT] Errore execute() su attuatore {actuator.id}: {e}")
 
+        if not found:
+            print(f"[MQTT] Nessun attuatore con id={device_id}")
+
+    # -------------------------
+    # SENSORS READ + HISTORY
+    # -------------------------
     def read_all(self):
-        readings = {}  # dizionario per valori in un singolo istante
+        readings = {}
 
         for sensor in self.sensors:
             value = sensor.read()
-=======
-        command = parts[4] # serve solo se il dispositivo ha più attuatori al suo interno!!! 
-
-
-        for actuator in self.actuators:
-            print("\n STO CONTROLLANDO L'IDDDDDDDDDDDDDDDDDDDDDDDDDD\n")
-            if str(actuator.id)==str(device_id): #id univoco tra tutti i device
-                print(f"\n\nQuesto è il PAYLOAD: {payload_dict}\n\n")
-                actuator.execute(payload_dict)
-    
-
-
-
-    def read_all(self):
-        readings={} # dizionario per valori in un singolo istante
-
-        for sensor in self.sensors:
-            value=sensor.read()
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
             payload = {
-                "name": sensor.id,
-                "unit": sensor.unit,
+                "name": sensor.id,  # oppure sensor.name se preferisci
+                "unit": getattr(sensor, "unit", None),
                 "value": value,
                 "timestamp": self.time_convert(time.time())
             }
 
-<<<<<<< HEAD
-            topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value"  # topic in cui verrà pubblicato il dato
+            # topic telemetria
+            topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value"
             self.publish_senml(topic, payload)
-=======
-            topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value" #topic in cui verrà pubblicato il dato
-            self.publish_senml(topic,payload)
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
 
-            readings[sensor.name]=value
+            readings[sensor.name] = value
 
-<<<<<<< HEAD
-            self.history[sensor.name].append(value)  # salvataggio valore nella history
-
-            if len(self.history[
-                       sensor.name]) > MAX_HISTORY:  # se la lista supera una soglia ==> il valore più vecchio viene eliminato
-=======
-            self.history[sensor.name].append(value) # salvataggio valore nella history
-
-            if len(self.history[sensor.name]) > MAX_HISTORY: # se la lista supera una soglia ==> il valore più vecchio viene eliminato
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
+            # aggiorna history
+            self.history[sensor.name].append(value)
+            if len(self.history[sensor.name]) > MAX_HISTORY:
                 self.history[sensor.name].pop(0)
 
         return readings
-    
 
-
+    # -------------------------
+    # STATS
+    # -------------------------
     def min_value(self, sensor):
         values = self.history[sensor.name]
-        if values:
-            min_val = min(values)
-            payload = {
-                "name": sensor.id,
-                "unit": sensor.unit,
-                "value": min_val,
-                "timestamp": self.time_convert(time.time())
-            }
-            return payload
-
-        else:
+        if not values:
             return None
+
+        min_val = min(values)
+        return {
+            "name": sensor.id,
+            "unit": getattr(sensor, "unit", None),
+            "value": min_val,
+            "timestamp": self.time_convert(time.time())
+        }
 
     def max_value(self, sensor):
         values = self.history[sensor.name]
-        if values:
-            max_val = max(values)
-            payload = {
-                "name": sensor.id,
-                "unit": sensor.unit,
-                "value": max_val,
-                "timestamp": self.time_convert(time.time())
-            }
-            return payload
-        else:
+        if not values:
             return None
+
+        max_val = max(values)
+        return {
+            "name": sensor.id,
+            "unit": getattr(sensor, "unit", None),
+            "value": max_val,
+            "timestamp": self.time_convert(time.time())
+        }
 
     def average(self, sensor):
-        total = 0
         values = self.history[sensor.name]
-
-        if len(values) == 0:
+        if not values:
             return None
 
-        for value in values:
-            total += value
-
-        avg = total / len(values)
-
-        payload = {
+        avg = sum(values) / len(values)
+        return {
             "name": sensor.id,
-            "unit": sensor.unit,
+            "unit": getattr(sensor, "unit", None),
             "value": avg,
             "timestamp": self.time_convert(time.time())
         }
 
-        return payload
-
+    # -------------------------
+    # REPORTING + ALERTS
+    # -------------------------
     def print_all_status(self):
         for sensor in self.sensors:
             avg = self.average(sensor)
             min_v = self.min_value(sensor)
             max_v = self.max_value(sensor)
-            print(f'\n{sensor.name}: media={avg}, min={min_v}, max={max_v}\n')
-            topic = f'/device/{sensor.id}/telemetry/{sensor.name}'
 
-            # Controllo dei valori:
+            print(f"\n{sensor.name}: media={avg}, min={min_v}, max={max_v}\n")
+
+            base_topic = f"/device/{sensor.id}/telemetry/{sensor.name}"
+
             if avg is not None:
-                self.publish(f'{topic}/avg', avg)
-
+                self.publish(f"{base_topic}/avg", avg)
             if min_v is not None:
-                self.publish(f'{topic}/min', min_v)
-
+                self.publish(f"{base_topic}/min", min_v)
             if max_v is not None:
-                self.publish(f'{topic}/max', max_v)
+                self.publish(f"{base_topic}/max", max_v)
 
     def reset_all_history(self):
         for sensor in self.sensors:
@@ -256,38 +203,45 @@ class EdgeDevice:
         for sensor in self.sensors:
             avg = self.average(sensor)
             if avg is None:
-                continue  # non interrompe la funzione, passa al sensore successivo (a differenza di return!)
+                continue
+
+            # se un sensore non ha thresholds, salto
+            if not hasattr(sensor, "thresholds") or sensor.thresholds is None:
+                continue
 
             low, high = sensor.thresholds
 
             if avg["value"] < low or avg["value"] > high:
                 print("\n!---- MONITORING ----!\n")
-                print(f"{sensor.name}: Allerta! Media valori insolita: ({avg})\n")
+                print(f"{sensor.name}: Allerta! Media valori fuori soglia: {avg}\n")
 
-                # payload d'allerta
                 payload = {
                     "type": "threshold_alert",
                     "sensor": sensor.name,
                     "device_id": sensor.id,
-                    "value": avg,
+                    "value": avg["value"],
                     "threshold_low": low,
                     "threshold_high": high,
-                    "timestamp": self.time_convert(time.time())  # orario del dispositivo
+                    "timestamp": self.time_convert(time.time())
                 }
 
-                topic = f'/device/{sensor.id}/alerts/{sensor.name}'
+                topic = f"/device/{sensor.id}/alerts/{sensor.name}"
                 self.publish(topic, payload)
 
-    def run(self, delay):
+    # -------------------------
+    # MAIN LOOP
+    # -------------------------
+    def run(self, delay=10):
         while True:
             raw = self.read_all()
-            print("\n\n\n\n----- DATI GREZZI -----\n")
+            print("\n----- DATI GREZZI -----")
             print(raw)
+
             self.print_all_status()
             self.monitoring_all()
+
             print("\n==============================\n")
-<<<<<<< HEAD
             time.sleep(delay)
-=======
-            time.sleep(delay)
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
+
+
+
