@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from Manager.dataAnalisys.database_manager import DatabaseManager
+from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
