@@ -59,14 +59,29 @@ class ManagerConsumer:
 
     def topic_gestor_telemetry_value(self, topic_parts, payload):
         # Gestisce i messaggi di telemetria dei device
-        payload_dict = json.loads(payload) # converte il payload in un dizionario
-        print("ADDING: ", f"{topic_parts[4]}[{payload_dict['u']}] of device: {payload_dict['n']}", payload_dict['v'], payload_dict['t'])
-        self.database.add_data(
-                f"{topic_parts[4]}[{payload_dict['u']}] of device: {payload_dict['n']}",
-                payload_dict['v'],
-                payload_dict['t']
-                )
+        try:
 
+
+            if isinstance(payload, bytes):
+                payload_str = payload.decode("utf-8")
+            else:
+                payload_str = str(payload)
+            
+            dict = json.loads(payload_str)
+            unit = dict["u"]
+            name = dict["n"]
+            title = f'"{topic_parts[4]}[{unit}]ofdevice{name}"'
+            # esempio nome tabella: Temp[Cel] of device dev001
+            value = dict['v']
+            time = dict['t']
+            self.database.add_data_blitz(title, value, time)
+            print(f"[MQTT - Manager] Telemetria ricevuta: in {title} inserito {value} a time: {time}")
+
+            
+
+
+        except Exception as e:
+            print(f"[MQTT - Manager] Errore durante la gestione del messaggio di telemetria: {e}")
 
 
     def on_disconnect(self, client, userdata, rc):
@@ -76,6 +91,7 @@ class ManagerConsumer:
         self.database.disconnect()
 
     def connetc_mqtt(self):
+        print(f"[MQTT - Manager] Inizio connessione verso broker MQTT: {self.broker}:{self.port}")
         try:
             self.client = mqtt.Client()
             self.client.on_message = self.on_message # quando arriva un messaggio chiama la funzione on_message

@@ -14,11 +14,10 @@ def main():
 
     manager.connetc_mqtt()
     manager.subscribe_contents([
-        "/device/+/status/#",
-        "/device/+/alerts/#",
-        "/device/+/telemetry/+/#",      # ? ho copiato dal README, ma non so se è giusto
-        "/device/+/telemetry/#",
-        "/device/+/info"
+        #"/device/+/status/#",
+        #"/device/+/alerts/#",
+        "/device/+/telemetry/+/value",      
+        #"/device/+/info"
         
     ])
 

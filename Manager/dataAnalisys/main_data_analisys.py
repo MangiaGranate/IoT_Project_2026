@@ -7,8 +7,13 @@ import time
 def main():
     
     DBM = DatabaseManager("data_analisys.db")
-    DBM.delete_database_file()
+    #DBM.delete_database_file()
+    #DBM.menu()
+
+
     DBM.connect()
+    tables = DBM.get_all_tables()
+    print(tables)
     
 
     DBM.add_data("temperature", random.uniform(10, 30), time.time())
@@ -20,11 +25,13 @@ def main():
     DBM.add_data("temperature", random.uniform(10, 30), time.time())
 
 
-    DBM.generate_grap("temperature")
+    DBM.generate_grap("inverter[W] of device dev003")
+    DBM.generate_grap("non_esiste")
     DBM.generate_grap("v")
 
 
     DBM.disconnect()
+
 
 
 if __name__ == "__main__":
