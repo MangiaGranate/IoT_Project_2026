@@ -34,6 +34,8 @@ class ManagerConsumer:
 
         topic_parts = message.topic.split("/") # /device/<id>/...
 
+        # !!! ricorda di aggiungere il topi all'iscrizione (in main_manager.py) quando viene creato il suo gestor
+
         if topic_parts[3] == "status":
             #/device/<id>/status/...
             ...
@@ -42,9 +44,9 @@ class ManagerConsumer:
             #/device/<id>/alerts/...
             ...
 
-        elif topic_parts[3] == "telemetry" and topic_parts[5] == "value":
+        elif topic_parts[3] == "telemetry":
             #/device/<id>/telemetry/...
-            self.topic_gestor_telemetry_value(topic_parts, message_payload)
+            self.topic_gestor_telemetry(topic_parts, message_payload)
 
         elif topic_parts[3] == "info":
             #/device/<id>/info
@@ -55,9 +57,7 @@ class ManagerConsumer:
             
         
 
-
-
-    def topic_gestor_telemetry_value(self, topic_parts, payload):
+    def topic_gestor_telemetry(self, topic_parts, payload):
         # Gestisce i messaggi di telemetria dei device
         try:
 
@@ -69,8 +69,11 @@ class ManagerConsumer:
             
             dict = json.loads(payload_str)
             unit = dict["u"]
-            name = "test_name"#dict["n"]
-            title = f'"{topic_parts[4]}[{unit}]_of_device{name}"'
+            name = dict["n"]
+            if topic_parts[5] in ["min", "max", "avg"]:
+                title = f'"{topic_parts[4]}[{unit}]_{topic_parts[5]}_value_of_device{name}"'
+            else:
+                title = f'"{topic_parts[4]}[{unit}]_of_device{name}"'
             # esempio nome tabella: Temp[Cel] of device dev001
             value = dict['v']
             time = dict['t']

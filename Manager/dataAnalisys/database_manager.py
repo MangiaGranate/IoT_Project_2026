@@ -123,7 +123,7 @@ class DatabaseManager:
                 plt.plot(x, y, marker='o', color='b')
                 plt.title(name)
                 plt.xlabel("time")
-                plt.ylabel(name)
+                plt.ylabel("value")
                 plt.grid()
                 plt.show()
 
@@ -138,18 +138,18 @@ class DatabaseManager:
 
     def menu(self):
         while True:
-            print("\n\n[DATABASE] Database Manager Menu:")
+            print("\n\n[DATABASE - MENU] Database Manager Menu:")
             if self.connection == None:
-                print("[DATABASE] Disconnesso")
-                input("Premere Enter per connettersi al database...")
+                print("[DATABASE - MENU] Disconnesso")
+                input("[DATABASE - MENU] Premere Enter per connettersi al database...")
                 self.connect()
             else:
-                print("\t[0] exit")
+                print("[DATABASE - MENU] [0] exit")
                 tables = self.get_all_tables()
                 for i, table in enumerate(tables):
-                    print(f'\t[{i+1}]  "{table}"')
+                    print(f'[DATABASE - MENU] [{i+1}]  "{table}"')
 
-                choice = input("Select: ")
+                choice = input("[DATABASE - MENU] Select: ")
                 try:
                     choice = int(choice)
                     
@@ -161,9 +161,14 @@ class DatabaseManager:
                         self.generate_grap(tables[choice-1])
                     else:
                         pass
-                except Exception as e:  
-                    print(e)
-                    pass
+                except:  
+                    if choice == "delete":
+                        self.disconnect()
+                        self.delete_database_file()
+                        self.connection=None
+                        print(f"[DATABASE - MENU] file {self.db_name} deleted x_x")
+                    else:
+                        print("[DATABASE - MENU] invalid choice o_O")
                 
 
                 

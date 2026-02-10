@@ -16,7 +16,7 @@ def main():
     manager.subscribe_contents([
         #"/device/+/status/#",
         #"/device/+/alerts/#",
-        "/device/+/telemetry/+/value",      
+        "/device/+/telemetry/+/#",      
         #"/device/+/info"
         
     ])

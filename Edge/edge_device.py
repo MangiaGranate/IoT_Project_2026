@@ -188,12 +188,14 @@ class EdgeDevice:
 
             base_topic = f"/device/{sensor.id}/telemetry/{sensor.name}"
 
+
+            # publish_senml()
             if avg is not None:
-                self.publish(f"{base_topic}/avg", avg)
+                self.publish_senml(f"{base_topic}/avg", avg)
             if min_v is not None:
-                self.publish(f"{base_topic}/min", min_v)
+                self.publish_senml(f"{base_topic}/min", min_v)
             if max_v is not None:
-                self.publish(f"{base_topic}/max", max_v)
+                self.publish_senml(f"{base_topic}/max", max_v)
 
     def reset_all_history(self):
         for sensor in self.sensors:
