@@ -15,17 +15,17 @@ class DatabaseManager:
     def connect(self):
         try:
             self.connection = sqlite3.connect(self.db_name)
-            print(f"[DATABASE] Path database: {os.path.abspath(self.db_name)}")
+            print(f"[DATABASE] Percordo del database file: {os.path.abspath(self.db_name)}")
             self.cursor = self.connection.cursor()
-            print("[DATABASE] Database connection established.")
+            print("[DATABASE] connessione al database stabilita.")
         except sqlite3.Error as e:
-            print(f"[DATABASE] Error connecting to database: {e}")
+            print(f"[DATABASE] Errore durante la connessione al database: {e}")
 
 
     def disconnect(self):
         if self.connection:
             self.connection.close()
-            print("[DATABASE] Database connection closed.")
+            print("[DATABASE] Connessione al database chiusa.")
 
 
     def add_data(self, name: str, value, time):  #!!! Non c'è controllo del datatype
@@ -35,11 +35,11 @@ class DatabaseManager:
                 self.create_table_if_not_exists(name)  # Assicurati che la tabella esista prima di inserire i dati
                 self.cursor.execute(f"INSERT INTO {name} (value, time) VALUES (?, ?)", (value, time))
                 self.connection.commit()
-                print("[DATABASE] Data added successfully.")
+                print("[DATABASE] Dato aggiunto con successo.")
             except sqlite3.Error as e:
-                print(f"[DATABASE] Error adding data: {e}")
+                print(f"[DATABASE] Errore durante l'aggiunta del dato: {e}")
         else:
-            print("[DATABASE] No database connection. Please connect to the database first.")
+            print("[DATABASE] Nessuna connessione al database. Per favore connettersi al database")
     
     
     def add_data_blitz(self, name, value, time):
@@ -57,10 +57,10 @@ class DatabaseManager:
                 data = self.cursor.fetchall()
                 return data
             except sqlite3.Error as e:
-                print(f"[DATABASE] Error retrieving data: {e}")
+                print(f"[DATABASE] Errore nella ricezione del dato: {e}")
                 return []
         else:
-            print("[DATABASE] No database connection. Please connect to the database first.")
+            print("[DATABASE] Nessuna connessione al database. Per favore connettersi al database")
             return []
 
 
@@ -82,10 +82,10 @@ class DatabaseManager:
 
         if os.path.exists(db_path):
             os.remove(db_path)
-            print(f"[DATABASE] Database {db_path} deleted successfully.")
+            print(f"[DATABASE] Database {db_path} eliminato con successo !")
             return True
         else:
-            print(f"[DATABASE] File {db_path} not found.")
+            print(f"[DATABASE] File {db_path} non trovato...")
             return False
 
 
@@ -98,10 +98,10 @@ class DatabaseManager:
                 tables = self.cursor.fetchall()
                 return [table[0] for table in tables]
             except sqlite3.Error as e:
-                print(f"[DATABASE] Error retrieving tables: {e}")
+                print(f"[DATABASE] Errore nell'ottenimento della tabella: {e}")
                 return []
         else:
-            print("[DATABASE] No database connection. Please connect to the database first.")
+            print("[DATABASE] Nessuna connessione al database. Per favore connettersi al database")
             return []
 
 
@@ -128,10 +128,10 @@ class DatabaseManager:
                 plt.show()
 
             except sqlite3.Error as e:
-                print(f"[DATABASE] Error generate_graf: {e}")
+                print(f"[DATABASE] Errore nella generazione del grafico: {e}")
                 return []
         else:
-            print("[DATABASE] No database connection. Please connect to the database first.")
+            print("[DATABASE] Nessuna connessione al database. Per favore connettersi al database")
             return None
 
 
@@ -140,8 +140,8 @@ class DatabaseManager:
         while True:
             print("\n\n[DATABASE] Database Manager Menu:")
             if self.connection == None:
-                print("[DATABASE] Disconnected")
-                input("Press Enter to connect to the database...")
+                print("[DATABASE] Disconnesso")
+                input("Premere Enter per connettersi al database...")
                 self.connect()
             else:
                 print("\t[0] exit")

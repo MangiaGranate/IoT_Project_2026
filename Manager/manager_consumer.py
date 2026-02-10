@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
+from Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
@@ -61,8 +61,8 @@ class ManagerConsumer:
         # Gestisce i messaggi di telemetria dei device
         try:
 
-
-            if isinstance(payload, bytes):
+            # AGGIUNGE IL PAYLOAD NEL DATABASE
+            if isinstance(payload, bytes):      #i json sono in formato bytes
                 payload_str = payload.decode("utf-8")
             else:
                 payload_str = str(payload)
