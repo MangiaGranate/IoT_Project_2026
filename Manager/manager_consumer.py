@@ -69,8 +69,8 @@ class ManagerConsumer:
             
             dict = json.loads(payload_str)
             unit = dict["u"]
-            name = dict["n"]
-            title = f'"{topic_parts[4]}[{unit}]ofdevice{name}"'
+            name = "test_name"#dict["n"]
+            title = f'"{topic_parts[4]}[{unit}]_of_device{name}"'
             # esempio nome tabella: Temp[Cel] of device dev001
             value = dict['v']
             time = dict['t']

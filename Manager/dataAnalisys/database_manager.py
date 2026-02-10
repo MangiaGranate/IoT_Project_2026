@@ -6,7 +6,7 @@ import time
 
 class DatabaseManager:
 
-    def __init__(self, db_name):
+    def __init__(self, db_name: str):
         self.db_name = db_name
         self.connection = None
         self.cursor = None
@@ -31,7 +31,7 @@ class DatabaseManager:
     def add_data(self, name: str, value, time):  #!!! Non c'è controllo del datatype
         if self.connection:
             try:
-                name = name.replace(" ", "")
+                #name = f'"{name}"'
                 self.create_table_if_not_exists(name)  # Assicurati che la tabella esista prima di inserire i dati
                 self.cursor.execute(f"INSERT INTO {name} (value, time) VALUES (?, ?)", (value, time))
                 self.connection.commit()
@@ -109,7 +109,7 @@ class DatabaseManager:
 
         if self.connection:
             try:
-                name = name.replace(" ", "")
+                name = f'"{name}"'
                 self.cursor.execute(f"SELECT * FROM {name}")
                 data = self.cursor.fetchall()
                 x=[]
@@ -118,6 +118,7 @@ class DatabaseManager:
                     x.append(row[0])
                     y.append(row[1])
 
+                print("[DATABASE] Show grap")
                 plt.figure(figsize=(10, 5))
                 plt.plot(x, y, marker='o', color='b')
                 plt.title(name)
@@ -137,7 +138,7 @@ class DatabaseManager:
 
     def menu(self):
         while True:
-            print("\n[DATABASE] Database Manager Menu:")
+            print("\n\n[DATABASE] Database Manager Menu:")
             if self.connection == None:
                 print("[DATABASE] Disconnected")
                 input("Press Enter to connect to the database...")

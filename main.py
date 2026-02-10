@@ -32,7 +32,7 @@ def main():
     edge.subscribe_commands()
 
     try:
-        edge.run(delay=10)
+        edge.run(delay=3)
     except KeyboardInterrupt:
         print("Chiusura Edge...")
         edge.client.loop_stop()
