@@ -169,6 +169,33 @@ class DatabaseManager:
                         print(f"[DATABASE - MENU] file {self.db_name} deleted x_x")
                     else:
                         print("[DATABASE - MENU] invalid choice o_O")
-                
+
+        def get_all_data_ordered(self, name: str):
+            if self.connection:
+                try:
+                    self.cursor.execute(f"SELECT time, value FROM {name} ORDER BY CAST(time AS REAL) ASC")
+                    return self.cursor.fetchall()
+                except sqlite3.Error as e:
+                    print(f"[DATABASE] Errore get_all_data_ordered: {e}")
+                    return []
+            else:
+                print("[DATABASE] Nessuna connessione al database. Per favore connettersi al database")
+                return []
+
+    def add_alert(self, level, message, risk, timestamp):
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                time REAL,
+                level TEXT,
+                message TEXT,
+                risk REAL
+            )
+        """)
+        self.cursor.execute(
+            "INSERT INTO alerts (time, level, message, risk) VALUES (?, ?, ?, ?)",
+            (timestamp, level, message, risk)
+        )
+        self.connection.commit()
 
                 
