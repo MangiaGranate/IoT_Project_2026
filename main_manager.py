@@ -1,6 +1,6 @@
 # Questo file lancia le funzioni del manager, che a sua volta lancia le funzioni dei device e del server
 
-from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+from IoT_Project_2026.Manager import MqttConfigurationParameters as MqttConf
 from Manager.manager_consumer import ManagerConsumer
 
 def main():

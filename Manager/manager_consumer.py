@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from Manager.dataAnalisys.database_manager import DatabaseManager
+from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
@@ -14,6 +14,8 @@ class ManagerConsumer:
         self.passwd=passwd
         self.client=None
         self.database=DatabaseManager(database_name)
+        self.path_contatore = r"C:\Users\Utente\Desktop\nuovacartella\IoT_Project_2026\counter.json"
+        self.contatore_dati = 0
 
         try:
             self.database.connect()     #collegarsi al database quando creo l'istanza
@@ -24,8 +26,6 @@ class ManagerConsumer:
     def on_connect(self, client, userdata, flags, rc):          # ?
         # chiamata quando il client si connette al broker
         print(f"[MQTT - Manager] Connessione a {self.broker}:{self.port}")
-
-
 
     def on_message(self, client, userdata, message):
         # chiamata quando il client riceve un messaggio
@@ -54,7 +54,11 @@ class ManagerConsumer:
 
         else:
             print(f"[MQTT - Manager] !!!  \t\tTopic non riconosciuto: {message.topic}")
-            
+        print("\n========== MQTT MESSAGE ==========")
+        print("TOPIC  :", message.topic)
+        print("PAYLOAD:", message.payload)  # bytes
+        print("PAYLOAD_STR:", message.payload.decode("utf-8", errors="replace"))
+        print("==================================\n")
         
 
     def topic_gestor_telemetry(self, topic_parts, payload):
@@ -86,6 +90,11 @@ class ManagerConsumer:
         except Exception as e:
             print(f"[MQTT - Manager] Errore durante la gestione del messaggio di telemetria: {e}")
 
+        # aggiorna contatore
+        self.contatore_dati += 1
+        with open(self.path_contatore, "w", encoding="utf-8") as f:
+            json.dump({"n_dati": self.contatore_dati, "timestamp": int(time.time())}, f)
+        print("[MANAGER] scritto counter:", self.path_contatore, "=", self.contatore_dati)
 
     def on_disconnect(self, client, userdata, rc):
         # chiamata quando il client si disconnette dal broker

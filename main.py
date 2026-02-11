@@ -1,6 +1,6 @@
 
 from Edge.iot_devices import *
-from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+from IoT_Project_2026.Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
 # from Manager.mqtt.mqtt_conf_params import MqttConfigurationParameters as MqttConf
 from Edge.edge_device import EdgeDevice
 
