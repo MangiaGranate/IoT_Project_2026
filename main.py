@@ -24,11 +24,7 @@ def main():
         sensors=sensors,
         actuators=actuators,
         broker=MqttConf.BROKER_ADDRESS,
-<<<<<<< HEAD
-        port=MqttConf.BROKER_PORT,
-=======
         port=MqttConf.BROKER_PORT
->>>>>>> 9e4edd5963c0492232727d053b26651f69ca7576
     )
 
 
