@@ -9,6 +9,7 @@
     - [Monitoring e soglie](#monitoring-e-soglie)
     - [Simulazione](#simulazione)
     - [Payload](#payload)
+    - [Connessione Attuatori - Sensori](#connessione-attuatori---sensori)
   - [MQTT](#mqtt)
     - [Topic MQTT](#topic-mqtt)
     - [Wildcards MQTT](#wildcards-mqtt)
@@ -96,6 +97,14 @@ payload = {
   "timestamp": self.time_convert(time.time())
 }
 ```
+
+### Connessione Attuatori - Sensori
+
+I sensori non generano valori casuali, ma **reagiscono agli attuatori** a cui sono collegati.   
+```Ogni misura deriva da un target fisico determinato dallo stato dell’attuatore (es. RPM dell’inverter, velocità delle ventole), a cui il sensore si avvicina gradualmente tramite un modello di inerzia.   
+Un leggero rumore rende la simulazione realistica, producendo valori stabili che oscillano attorno al comportamento atteso.
+```
+
 
 ## MQTT
 

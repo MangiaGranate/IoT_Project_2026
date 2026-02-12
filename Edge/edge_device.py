@@ -7,28 +7,19 @@ MAX_HISTORY = 10
 
 
 class EdgeDevice:
-<<<<<<< HEAD
 
-    def __init__(self, sensors, actuators, broker,
-                 port):  # lista dei sensori, per poter leggere tutti i dati & lista attuatori
-=======
-    def __init__(self, sensors, actuators, broker, port):
-        # lista sensori/attuatori + parametri broker
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
+    def __init__(self, sensors, actuators, broker, port):  # lista dei sensori, per poter leggere tutti i dati & lista attuatori
         self.sensors = sensors
         self.actuators = actuators
         self.broker = broker
         self.port = port
 
-        # history per ciascun sensore (chiave = sensor.name)
+        # history per ciascuna tipologia di sensore (chiave = sensor.name)
         self.history = {sensor.name: [] for sensor in sensors}
 
         self.client = None
-<<<<<<< HEAD
         for sensor in sensors:
             self.history[sensor.name] = []  # creazione lista vuota per ogni sensore
-=======
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
 
     # -------------------------
     # UTILS
@@ -40,13 +31,9 @@ class EdgeDevice:
     # MQTT
     # -------------------------
     def connect_mqtt(self):
-        # Se usi paho-mqtt 2.x e ti dà errori di callback version, dimmelo e lo adatto.
+        
         self.client = mqtt.Client()
-<<<<<<< HEAD
         self.client.on_message = self.on_message  # quando arriva un messaggio chiama la funzione on_message
-=======
-        self.client.on_message = self.on_message
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
         print(f"[MQTT] Connessione a {self.broker}:{self.port}")
@@ -80,12 +67,9 @@ class EdgeDevice:
         self.client.subscribe("/device/+/commands/#")
         print("[MQTT] Subscribe a /device/+/commands/#")
 
-<<<<<<< HEAD
-=======
     def on_message(self, client, userdata, msg):
         topic = msg.topic
         raw_payload = msg.payload.decode()
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
 
         try:
             payload_dict = json.loads(raw_payload) if raw_payload else {}
@@ -99,7 +83,6 @@ class EdgeDevice:
 
         # Topic atteso: /device/<id>/commands/<command>[/...]
         parts = topic.split("/")
-<<<<<<< HEAD
         # /device/<id>/commands/<command>
         #  1      2     3         4
 
@@ -110,18 +93,9 @@ class EdgeDevice:
         device_id = parts[2]
         print(f"\nQUESTO è IL DEVICE ID: {device_id}\n")
         command = parts[4]  # serve solo se il dispositivo ha più attuatori al suo interno!!!
-=======
-        # Esempio: ["", "device", "<id>", "commands", "<command>"]
-        if len(parts) < 5 or parts[1] != "device" or parts[3] != "commands":
-            print("[MQTT] Topic comando non valido")
-            return
-
-        device_id = parts[2]
-        command = parts[4]  # se vuoi usarlo dentro execute, puoi metterlo nel payload
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
 
         # opzionale: aggiungo command nel payload così l'attuatore lo vede
-        payload_dict.setdefault("command", command)
+        #payload_dict.setdefault("command", command)
 
         found = False
         for actuator in self.actuators:
@@ -145,31 +119,20 @@ class EdgeDevice:
             value = sensor.read()
 
             payload = {
-                "name": sensor.id,  # oppure sensor.name se preferisci
+                "name": sensor.id,
                 "unit": getattr(sensor, "unit", None),
                 "value": value,
                 "timestamp": self.time_convert(time.time())
             }
 
-<<<<<<< HEAD
             topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value"  # topic in cui verrà pubblicato il dato
-=======
-            # topic telemetria
-            topic = f"/device/{sensor.id}/telemetry/{sensor.name}/value"
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
             self.publish_senml(topic, payload)
 
             readings[sensor.name] = value
 
-<<<<<<< HEAD
             self.history[sensor.name].append(value) # salvataggio valore nella history
 
             if len(self.history[sensor.name]) > MAX_HISTORY: # se la lista supera una soglia ==> il valore più vecchio viene eliminato
-=======
-            # aggiorna history
-            self.history[sensor.name].append(value)
-            if len(self.history[sensor.name]) > MAX_HISTORY:
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
                 self.history[sensor.name].pop(0)
 
         return readings
@@ -285,9 +248,3 @@ class EdgeDevice:
 
             print("\n==============================\n")
             time.sleep(delay)
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd

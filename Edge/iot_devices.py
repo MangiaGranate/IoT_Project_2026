@@ -10,53 +10,113 @@ from Edge.model.actuator import Actuator
 
 
 class SensTemp(Sensor): 
-    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds, actuators=None):
         super().__init__(version, name, id, manufacturer)
+
+        if actuators:
+            self.actuators = actuators
+        else:
+            self.actuators=[]
+        
         self.value=value
         self.unit=unit
         self.thresholds=thresholds # (40, 80) °C
 
     def read(self):
-        self.value += random.uniform(-0.5, 0.5)
+
+        cooling = 0
+        heating = 0
+
+        for actuator in self.actuators:
+
+            # Ventole → raffreddano
+            if hasattr(actuator, "speed_percent"):
+                cooling += actuator.speed_percent * 0.05
+
+            # Inverter → scalda
+            if hasattr(actuator, "rpm"):
+                heating += (actuator.rpm / actuator.rpm_max) * 20
+
+        # Target = temperatura attuale + calore - raffreddamento
+        target_temp = self.value + heating - cooling
+
+        # Inerzia termica
+        self.value += (target_temp - self.value) * 0.1
+
+        # Rumore NON accumulato
+        self.value += random.uniform(-0.2, 0.2)
+
         return self.value
+    
+
+
+
+
+
+
+
+
+
 
 
 class SensVibr(Sensor): 
-    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds, actuators=None):
         super().__init__(version, name, id, manufacturer)
+
+        if actuators:
+            self.actuators = actuators
+        else:
+            self.actuators=[]
+
         self.value=value
         self.unit=unit
         self.thresholds=thresholds # m/s^2 (4.9 , 14.8)
 
     def read(self):
-        self.value += random.uniform(-0.8, 0.8)
+
+        for actuator in self.actuators:
+
+            # Evita crash se l’attuatore non ha rpm
+            if not hasattr(actuator, "rpm") or not hasattr(actuator, "rpm_max"):
+                continue
+
+            target_vibration = (actuator.rpm / actuator.rpm_max) * 10 # Vibrazioni maggiori ==> maggiore velocità
+
+            self.value += (target_vibration - self.value) * 0.1
+
+        self.value += random.uniform(-0.05, 0.05)
         return self.value
+
+
 
 
 class SensInv(Sensor): 
-    def __init__(self, version, name, id, manufacturer, unit, value, thresholds):
+    def __init__(self, version, name, id, manufacturer, unit, value, thresholds, actuators=None):
         super().__init__(version, name, id, manufacturer)
+
+        if actuators:
+            self.actuators = actuators
+        else:
+            self.actuators=[]
+
         self.value=value
         self.unit=unit
-        self.thresholds=thresholds # 500-1000 kg, (3000, 7500) W
+        self.thresholds=thresholds # 500-1000 kg, (0, 7500) W
         
     def read(self):
-        self.value += random.uniform(-50, 50)
+
+        for actuator in self.actuators:
+            target_power = (actuator.rpm / actuator.rpm_max) * 7500
+            self.value += (target_power - self.value) * 0.1 # Consumo maggiore ==> maggiore velocità
+
+        self.value += random.uniform(-2, 2)
         return self.value
 
 
 
-"""
-ATTUATORI CORRETTI e COERENTI con il tuo Actuator generico:
 
-- Actuator (base) ha:
-  - self.state
-  - execute(command) da sovrascrivere
 
-Quindi qui:
-- Relay, Inverter, Ventola OVERRIDE di execute()
-- Ogni execute() aggiorna SEMPRE self.state (dict pronto per JSON/MQTT)
-"""
+
 
 from typing import Dict, Any
 
@@ -67,7 +127,7 @@ class Relay(Actuator):
         self.state = {"enabled": self.enabled}
 
     def execute(self, command:Dict[str, Any]):
-        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
+        print("\nComando Ricevuto dal Relè!!\n")
         if isinstance(command, dict):
             value = command.get("on", command.get("enabled", False))
             self.enabled = bool(value)
@@ -77,7 +137,7 @@ class Relay(Actuator):
 
 class Inverter(Actuator):
     def __init__(self, version, name, id, manufacturer,
-                 rpm_min: int = 0, rpm_max: int = 3000):
+                 rpm_min: int = 0, rpm_max: int = 6000):
         super().__init__(version, name, id, manufacturer)
 
         self.rpm_min = int(rpm_min)
@@ -90,20 +150,20 @@ class Inverter(Actuator):
 
     def _current_state(self) -> Dict[str, Any]:
         return {
-            "running": self.running,
+            "enabled": self.running,
             "rpm": self.rpm,
             "rpm_min": self.rpm_min,
             "rpm_max": self.rpm_max
         }
 
     def execute(self, command: Dict[str, Any]):
-        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
+        print("\nComando Ricevuto dall'Inverter!!\n")
         if not isinstance(command, dict):
             raise ValueError("Inverter.execute() requires a dict (e.g. {'rpm': 1200})")
 
         # Start / Stop command
-        if "running" in command:
-            self.running = bool(command["running"])
+        if "enabled" in command:
+            self.running = bool(command["enabled"])
             if not self.running:
                 self.rpm = 0
 
@@ -145,7 +205,7 @@ class Fan(Actuator):
         }
 
     def execute(self, command: Dict[str, Any]):
-        print("\nFUNZIONAAAAAAAAAAAAAAAAAAAAA!!\n")
+        print("\nComando Ricevuto dall'impianto di Raffreddamento!!\n")
         if not isinstance(command, dict):
             raise ValueError("Fan.execute() requires a dict (e.g. {'speed_percent': 70})")
 

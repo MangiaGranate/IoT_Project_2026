@@ -1,35 +1,34 @@
 
 from Edge.iot_devices import *
-from IoT_Project_2026.Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
 # from Manager.mqtt.mqtt_conf_params import MqttConfigurationParameters as MqttConf
 from Edge.edge_device import EdgeDevice
 
 
 def main():
-    sensors = [
-        SensTemp(version="1.0", name="temperature", id="dev001", manufacturer="ACME",
-                 unit="Cel", value=25.0, thresholds=(40, 80)),
-        SensVibr(version="1.0", name="vibration", id="dev002", manufacturer="ACME",
-                 unit="m/s^2", value=5.0, thresholds=(4.9, 14.8)),
-        SensInv(version="1.0", name="inverter", id="dev003", manufacturer="ACME",
-                unit="W", value=3000, thresholds=(3000, 7500)),
-    ]
-
-    actuators = [
+    
+    actuators_list = [
         Inverter(version="1.2", name="inverter", id="dev003", manufacturer="ACME"),
         Relay(version="1.3", name="relay", id="dev004", manufacturer="finder"),
         Fan(version="1.12", name="fan", id="dev005", manufacturer="BOSCH"),
     ]
 
+
+    sensors = [
+        SensTemp(version="1.0", name="temperature", id="dev001", manufacturer="ACME",
+                 unit="Cel", value=25.0, thresholds=(40, 80), actuators=[actuators_list[2], actuators_list[0]]),
+        SensVibr(version="1.0", name="vibration", id="dev002", manufacturer="ACME",
+                 unit="m/s^2", value=5.0, thresholds=(4.9, 14.8), actuators=[actuators_list[0]]),
+        SensInv(version="1.0", name="inverter", id="dev003", manufacturer="ACME",
+                unit="W", value=3000, thresholds=(3000, 7500), actuators=[actuators_list[0]]),
+    ]
+
+
     edge = EdgeDevice(
         sensors=sensors,
-        actuators=actuators,
+        actuators=actuators_list,
         broker=MqttConf.BROKER_ADDRESS,
-<<<<<<< HEAD
         port=MqttConf.BROKER_PORT
-=======
-        port=MqttConf.BROKER_PORT,
->>>>>>> fa23b7c2ae113e7f8d91344c6312745dc4de3efd
     )
 
     edge.connect_mqtt()
