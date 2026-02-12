@@ -11,10 +11,7 @@ class AppMQTT:
         self.root = root
         root.title("MQTT GUI - Comandi + Alert (semplice)")
 
-        # Client MQTT (fix paho-mqtt 2.x: client_id come keyword)
         self.client = mqtt.Client(client_id="gui_comandi_alert")
-
-        # Callback
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.on_disconnect = self.on_disconnect

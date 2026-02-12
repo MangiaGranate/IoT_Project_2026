@@ -19,6 +19,8 @@
 - [Contributo di Luca Fiaccadori](#contributo-di-luca-fiaccadori)
   - [SenML.py](#senmlpy)
   - [Implementazione SenML.py in edge\_device.py](#implementazione-senmlpy-in-edge_devicepy)
+  - [Manager consumer](#manager-consumer)
+  - [Database \& DatabaseManager](#database--databasemanager)
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
 - [Info Gruppo](#info-gruppo)
 
@@ -202,7 +204,33 @@ Mi sono occupato del modulo SenML che implementa lo standard prima del broker e 
 - funzioni di ottenimento di una lista a partire da un SenMLPack con ottimizzazione dei record: applicazione delle basi e rimozione dei campi ridondanti
 
 ## Implementazione SenML.py in edge_device.py
-il modulo SenML.py viene usato in edge_decive.py (funzione di publish_senml) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
+Il modulo SenML.py viene usato in edge_decive.py (funzione di publish_senml) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
+La logica di gestione della telemetria del Manager è costruita aspettandosi un oggetto SenML-json
+
+<br><br>
+
+## Manager consumer 
+Implementa una classe ManagerConsumer contenente tutti i componenti per poter funzionare come client mqtt
+
+- funzione di connessione al broker (client salvato negli attributi della classe)
+- funzione generale per sottoscriversi ad una lista di topic 
+- gestor dei topic ricevuti: logica di gestione dei vari payload a seconda del topic
+- funzioni principali di phao.mqtt (on_connect, on_disconnect, on_message)
+- oggetto DatabaseManager salvato negli attributi...
+
+
+## Database & DatabaseManager
+Il Manager_consumer è stato pensato per poter immagazzinare i dati di telemetria ricevuti in modo che possano potenzialmente essere analizzati da altri moduli (come un ML);
+questo modulo implementa una classe DatabaseManager che sfrutta la libreria python sqlite3 per creare un piccolo database locale all'interno del file data_analisys.db; la struttura delle tabelle è time come primary key e value, esiste una tabella per ogni tipo di dato ricevibile
+La classe implementa tutte le funzioni necessarie per potersi interfacciare:
+
+- funzioni di connnessione e disconnessione al database
+- funzione add_data per aggiungere un elemento 
+- funzione get_all_data per ottenere tutti gli elementi di una certa raccolta
+- funzione generate_grap: si appoggia alla libreria matplotlib.pyplot per generare un grafico value(time) di una tabella
+- funzioni di debut e interfaccia come menu
+
+
 
 
 <br><br>

@@ -11,6 +11,22 @@ class MqttConfigurationParameters(object):
     MQTT_BASIC_TOPIC = "/iot/user/{0}".format(MQTT_USERNAME)
     LIFT_TOPIC = "lift"
     LIFT_TELEMETRY_TOPIC = "telemetry"
+    N_TARGET = 100
+    LIFT_ALERT_TOPIC = "alerts"
+
+class TopicBuilder:
+
+    @staticmethod
+    def telemetry():
+        return f"{MqttConfigurationParameters.MQTT_BASIC_TOPIC}/" \
+               f"{MqttConfigurationParameters.LIFT_TOPIC}/" \
+               f"{MqttConfigurationParameters.LIFT_TELEMETRY_TOPIC}"
+
+    @staticmethod
+    def alerts():
+        return f"{MqttConfigurationParameters.MQTT_BASIC_TOPIC}/" \
+               f"{MqttConfigurationParameters.LIFT_TOPIC}/" \
+               f"{MqttConfigurationParameters.LIFT_ALERT_TOPIC}"
 
 
 
