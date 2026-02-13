@@ -16,11 +16,11 @@ def main():
 
     sensors = [
         SensTemp(version="1.0", name="temperature", id="dev001", manufacturer="ACME",
-                 unit="Cel", value=25.0, thresholds=(40, 80), actuators=[actuators_list[2], actuators_list[0]]),
+                 unit="Cel", value=60.0, thresholds=(40, 80), actuators=[actuators_list[2], actuators_list[0]]),
         SensVibr(version="1.0", name="vibration", id="dev002", manufacturer="ACME",
-                 unit="m/s^2", value=5.0, thresholds=(4.9, 14.8), actuators=[actuators_list[0]]),
+                 unit="m/s^2", value=8.0, thresholds=(4.9, 14.8), actuators=[actuators_list[0]]),
         SensInv(version="1.0", name="inverter", id="dev003", manufacturer="ACME",
-                unit="W", value=3000, thresholds=(3000, 7500), actuators=[actuators_list[0]]),
+                unit="W", value=4000, thresholds=(3000, 7500), actuators=[actuators_list[0]]),
     ]
 
 

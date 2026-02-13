@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
+from Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
@@ -80,9 +80,9 @@ class ManagerConsumer:
                 title = f'"{topic_parts[4]}[{unit}]_of_device{name}"'
             # esempio nome tabella: Temp[Cel] of device dev001
             value = dict['v']
-            time = dict['t']
-            self.database.add_data_blitz(title, value, time)
-            print(f"[MQTT - Manager] Telemetria ricevuta: in {title} inserito {value} a time: {time}")
+            timestamp = dict['t']
+            self.database.add_data_blitz(title, value, timestamp)
+            print(f"[MQTT - Manager] Telemetria ricevuta: in {title} inserito {value} a time: {timestamp}")
 
             
 
@@ -91,10 +91,12 @@ class ManagerConsumer:
             print(f"[MQTT - Manager] Errore durante la gestione del messaggio di telemetria: {e}")
 
         # aggiorna contatore
+        '''
         self.contatore_dati += 1
         with open(self.path_contatore, "w", encoding="utf-8") as f:
             json.dump({"n_dati": self.contatore_dati, "timestamp": int(time.time())}, f)
         print("[MANAGER] scritto counter:", self.path_contatore, "=", self.contatore_dati)
+        '''
 
     def on_disconnect(self, client, userdata, rc):
         # chiamata quando il client si disconnette dal broker

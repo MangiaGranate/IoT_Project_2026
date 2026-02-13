@@ -229,9 +229,10 @@ Implementa una classe ManagerConsumer contenente tutti i componenti per poter fu
 
 
 ## Database & DatabaseManager
-Il Manager_consumer è stato pensato per poter immagazzinare i dati di telemetria ricevuti in modo che possano potenzialmente essere analizzati da altri moduli (come un ML);
-questo modulo implementa una classe DatabaseManager che sfrutta la libreria python sqlite3 per creare un piccolo database locale all'interno del file data_analisys.db; la struttura delle tabelle è time come primary key e value, esiste una tabella per ogni tipo di dato ricevibile
-La classe implementa tutte le funzioni necessarie per potersi interfacciare:
+Il Manager_consumer è stato pensato per poter immagazzinare i dati di telemetria ricevuti in modo che possano potenzialmente essere analizzati da altri moduli (come un ML);  
+questo modulo implementa una classe DatabaseManager che sfrutta la libreria python sqlite3 per creare un piccolo database locale all'interno del file data_analisys.db;  
+La struttura delle tabelle è time come primary key e value, esiste una tabella per ogni tipo di dato ricevibile.  
+La classe implementa tutte le funzioni necessarie per potersi interfacciare:  
 
 - funzioni di connnessione e disconnessione al database
 - funzione add_data per aggiungere un elemento 
