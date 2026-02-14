@@ -72,6 +72,8 @@ Ho progettato e sviluppato la classe `EdgeDevice`, responsabile della gestione l
 - Confronto della media con le soglie definite nei sensori  
 - Segnalazione di valori troppo alti o troppo bassi  
 - Identificazione di possibili guasti o anomalie
+  
+`Quando gli attuatori associati ai sensori sono spenti, l'edge device non invia allerte!`
 
 ---
 

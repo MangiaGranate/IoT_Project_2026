@@ -143,14 +143,14 @@ class Inverter(Actuator):
         self.rpm_min = int(rpm_min)
         self.rpm_max = int(rpm_max)
 
-        self.running = False
+        self.enabled = False
         self.rpm = 0
 
         self.state = self._current_state()
 
     def _current_state(self) -> Dict[str, Any]:
         return {
-            "enabled": self.running,
+            "enabled": self.enabled,
             "rpm": self.rpm,
             "rpm_min": self.rpm_min,
             "rpm_max": self.rpm_max
@@ -163,8 +163,8 @@ class Inverter(Actuator):
 
         # Start / Stop command
         if "enabled" in command:
-            self.running = bool(command["enabled"])
-            if not self.running:
+            self.enabled = bool(command["enabled"])
+            if not self.enabled:
                 self.rpm = 0
 
         # RPM command
@@ -178,7 +178,7 @@ class Inverter(Actuator):
                 r = self.rpm_max
 
             self.rpm = r
-            self.running = self.rpm > 0
+            self.enabled = self.rpm > 0
 
         self.state = self._current_state()
 

@@ -217,6 +217,19 @@ class EdgeDevice:
 
             low, high = sensor.thresholds
 
+
+            actuator_enabled = False
+
+            # Se gli attuatori sono spenti allora non inviare allerte:
+            
+            for actuator in sensor.actuators:
+                if actuator.enabled:
+                    actuator_enabled=True
+                    break
+
+            if not actuator_enabled:
+                continue
+
             if avg["value"] < low or avg["value"] > high:
                 print("\n!---- MONITORING ----!\n")
                 print(f"{sensor.name}: Allerta! Media valori fuori soglia: {avg}\n")
