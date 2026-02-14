@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from Manager.dataAnalisys.database_manager import DatabaseManager
+from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
@@ -90,13 +90,6 @@ class ManagerConsumer:
         except Exception as e:
             print(f"[MQTT - Manager] Errore durante la gestione del messaggio di telemetria: {e}")
 
-        # aggiorna contatore
-        '''
-        self.contatore_dati += 1
-        with open(self.path_contatore, "w", encoding="utf-8") as f:
-            json.dump({"n_dati": self.contatore_dati, "timestamp": int(time.time())}, f)
-        print("[MANAGER] scritto counter:", self.path_contatore, "=", self.contatore_dati)
-        '''
 
     def on_disconnect(self, client, userdata, rc):
         # chiamata quando il client si disconnette dal broker

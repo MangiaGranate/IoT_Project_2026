@@ -3,6 +3,7 @@
 from Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
 from Manager.manager_consumer import ManagerConsumer
 
+
 def main():
     manager = ManagerConsumer(
         broker=MqttConf.BROKER_ADDRESS,

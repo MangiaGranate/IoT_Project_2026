@@ -198,4 +198,14 @@ class DatabaseManager:
         )
         self.connection.commit()
 
+    def get_all_data_ordered(self, table_name):
+        """
+        Restituisce tutte le righe della tabella ordinate per timestamp crescente.
+        Assume che le colonne siano (timestamp, value).
+        """
+        cursor = self.connection.cursor()
+        query = f'SELECT time, value FROM "{table_name}" ORDER BY time ASC;'
+        cursor.execute(query)
+        return cursor.fetchall()
+
                 

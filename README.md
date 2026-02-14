@@ -247,7 +247,32 @@ La classe implementa tutte le funzioni necessarie per potersi interfacciare:
 
 # Contributo di Ilir Rama
 
+## Applicazione esterna con funzionalità equivalenti a MQTT Explorer:  
+-Connettersi al broker MQTT configurato  
+-Pubblicare messaggi manualmente su topic specifici  
+-Sottoscriversi ai topic di sistema  
+-Visualizzare in tempo reale la telemetria ricevuta  
+-Ricevere notifiche di alert generate dal sistema
 
+## Configurazione del Broker MQTT
+
+-Configurazione dei parametri di connessione (IP, porta, credenziali)  
+-Gestione delle connessioni client
+
+## Implementazione del modello di Machine Learning
+ 
+-Calcolo della dose cumulativa sopra soglia  
+-Percentuale di tempo trascorso in stato di alarm  
+-Normalizzazione del danno su scala 0–1  
+-Aggregazione del rischio globale
+
+## Definizione e gestione degli attuatori
+
+
+-Associazione ID univoco dispositivo  
+-Parsing dei comandi ricevuti via MQTT  
+-Esecuzione del comando corretto in base al topic  
+-Separazione tra logica di controllo e comunicazione
 <br><br>
 
 # Info Gruppo
