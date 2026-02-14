@@ -23,6 +23,10 @@
   - [Manager consumer](#manager-consumer)
   - [Database \& DatabaseManager](#database--databasemanager)
 - [Contributo di Ilir Rama](#contributo-di-ilir-rama)
+  - [Applicazione esterna con funzionalità equivalenti a MQTT Explorer:](#applicazione-esterna-con-funzionalità-equivalenti-a-mqtt-explorer)
+  - [Configurazione del Broker MQTT](#configurazione-del-broker-mqtt)
+  - [Implementazione del modello di Machine Learning](#implementazione-del-modello-di-machine-learning)
+  - [Definizione e gestione degli attuatori](#definizione-e-gestione-degli-attuatori)
 - [Info Gruppo](#info-gruppo)
 
 
@@ -240,7 +244,7 @@ La classe implementa tutte le funzioni necessarie per potersi interfacciare:
 - funzione add_data per aggiungere un elemento 
 - funzione get_all_data per ottenere tutti gli elementi di una certa raccolta
 - funzione generate_grap: si appoggia alla libreria matplotlib.pyplot per generare un grafico value(time) di una tabella
-- funzioni di debut e interfaccia come menu
+- funzioni di debug e interfaccia come menu
 
 
 
@@ -250,31 +254,31 @@ La classe implementa tutte le funzioni necessarie per potersi interfacciare:
 # Contributo di Ilir Rama
 
 ## Applicazione esterna con funzionalità equivalenti a MQTT Explorer:  
--Connettersi al broker MQTT configurato  
--Pubblicare messaggi manualmente su topic specifici  
--Sottoscriversi ai topic di sistema  
--Visualizzare in tempo reale la telemetria ricevuta  
--Ricevere notifiche di alert generate dal sistema
+- Connettersi al broker MQTT configurato  
+- Pubblicare messaggi manualmente su topic specifici  
+- Sottoscriversi ai topic di sistema  
+- Visualizzare in tempo reale la telemetria ricevuta  
+- Ricevere notifiche di alert generate dal sistema
 
 ## Configurazione del Broker MQTT
 
--Configurazione dei parametri di connessione (IP, porta, credenziali)  
--Gestione delle connessioni client
+- Configurazione dei parametri di connessione (IP, porta, credenziali)  
+- Gestione delle connessioni client
 
 ## Implementazione del modello di Machine Learning
  
--Calcolo della dose cumulativa sopra soglia  
--Percentuale di tempo trascorso in stato di alarm  
--Normalizzazione del danno su scala 0–1  
--Aggregazione del rischio globale
+- Calcolo della dose cumulativa sopra soglia  
+- Percentuale di tempo trascorso in stato di alarm  
+- Normalizzazione del danno su scala 0–1  
+- Aggregazione del rischio globale
 
 ## Definizione e gestione degli attuatori
 
 
--Associazione ID univoco dispositivo  
--Parsing dei comandi ricevuti via MQTT  
--Esecuzione del comando corretto in base al topic  
--Separazione tra logica di controllo e comunicazione
+- Associazione ID univoco dispositivo  
+- Parsing dei comandi ricevuti via MQTT  
+- Esecuzione del comando corretto in base al topic  
+- Separazione tra logica di controllo e comunicazione
 <br><br>
 
 # Info Gruppo

@@ -1,4 +1,8 @@
 
+# Database
+*.db
+
+data_analisys.db
 # Enviroments
 .env
 .envrc
