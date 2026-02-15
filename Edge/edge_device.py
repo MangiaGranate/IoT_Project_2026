@@ -15,7 +15,10 @@ class EdgeDevice:
         self.port = port
 
         # history per ciascuna tipologia di sensore (chiave = sensor.name)
-        self.history = {sensor.name: [] for sensor in sensors}
+        self.history = {}
+        for sensor in sensors:
+            self.history[sensor.name] = []
+
 
         self.client = None
         for sensor in sensors:
@@ -72,7 +75,11 @@ class EdgeDevice:
         raw_payload = msg.payload.decode()
 
         try:
-            payload_dict = json.loads(raw_payload) if raw_payload else {}
+            if raw_payload:
+                payload_dict = json.loads(raw_payload)
+            else:
+                payload_dict = {}
+
         except json.JSONDecodeError:
             print("[MQTT] Payload non JSON, ignoro:", raw_payload)
             return
@@ -84,7 +91,7 @@ class EdgeDevice:
         # Topic atteso: /device/<id>/commands/<command>[/...]
         parts = topic.split("/")
         # /device/<id>/commands/<command>
-        #  1      2     3         4
+        # 0  1     2     3         4
 
         if len(parts) < 4:  # Controllo Topic
             print("Topic comando non valido")
@@ -94,12 +101,10 @@ class EdgeDevice:
         print(f"\nQUESTO è IL DEVICE ID: {device_id}\n")
         command = parts[4]  # serve solo se il dispositivo ha più attuatori al suo interno!!!
 
-        # opzionale: aggiungo command nel payload così l'attuatore lo vede
-        #payload_dict.setdefault("command", command)
 
         found = False
         for actuator in self.actuators:
-            if str(actuator.id) == str(device_id):
+            if str(actuator.id) == str(device_id): # Invio payload all'attuatore corretto
                 found = True
                 try:
                     actuator.execute(payload_dict)
@@ -112,7 +117,7 @@ class EdgeDevice:
     # -------------------------
     # SENSORS READ + HISTORY
     # -------------------------
-    def read_all(self):
+    def read_all(self): # Restituisce: {'temperature': value, 'vibration': value, 'inverter': value}
         readings = {}
 
         for sensor in self.sensors:
@@ -148,7 +153,7 @@ class EdgeDevice:
         min_val = min(values)
         return {
             "name": sensor.id,
-            "unit": getattr(sensor, "unit", None),
+            "unit": getattr(sensor, "unit", None), # prende l'attributo UNIT dell'oggetto sensore
             "value": min_val,
             "timestamp": self.time_convert(time.time())
         }

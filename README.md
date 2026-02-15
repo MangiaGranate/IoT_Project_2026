@@ -222,7 +222,7 @@ Mi sono occupato del modulo SenML che implementa lo standard prima del broker e 
 Il modulo SenML.py viene usato in edge_decive.py (funzione di publish_senml) per convertire il payload seconda lo standard SenML; il modulo non conosce ne edge_devices.py ne le funzioni del broker ma funge solo da convertitore per i payload.
 La logica di gestione della telemetria del Manager è costruita aspettandosi un oggetto SenML-json
 
-<br><br>
+
 
 ## Manager consumer 
 Implementa una classe ManagerConsumer contenente tutti i componenti per poter funzionare come client mqtt
@@ -285,11 +285,11 @@ La classe implementa tutte le funzioni necessarie per potersi interfacciare:
 
 **Componenti gruppo:**
 
-- `Luca Fiaccadori`
+- `Luca Fiaccadori`: [Profilo Github](https://github.com/MangiaGranate)
   
-- `Diego Bonatti`
+- `Diego Bonatti`: [Profilo Github](https://github.com/diego-bonatti)
 
-- `Ilir Rama`
+- `Ilir Rama`: [Profilo Github](https://github.com/Ilir30-lab)
 
 
 

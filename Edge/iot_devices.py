@@ -43,19 +43,11 @@ class SensTemp(Sensor):
         # Inerzia termica
         self.value += (target_temp - self.value) * 0.1
 
-        # Rumore NON accumulato
+        # Rumore
         self.value += random.uniform(-0.2, 0.2)
 
         return self.value
     
-
-
-
-
-
-
-
-
 
 
 
