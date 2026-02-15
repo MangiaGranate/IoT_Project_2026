@@ -1,0 +1,18 @@
+
+# Database
+*.db
+
+data_analisys.db
+# Enviroments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+#Py cache
+*.pyc
+__pycache__/
