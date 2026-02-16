@@ -8,7 +8,7 @@ import time
 
 def main():
     
-    DBM = DatabaseManager("C:/Users/diego/Desktop/Progetto_IoT/IoT_Project_2026/data_analisys.db")
+    DBM = DatabaseManager("data_analisys.db")
     DBM.delete_database_file()
     #DBM.menu()  #era commentato
 
@@ -38,7 +38,7 @@ def main():
 
 
 def init():
-    DBM = DatabaseManager("C:/Users/diego/Desktop/Progetto_IoT/IoT_Project_2026/data_analisys.db")
+    DBM = DatabaseManager("data_analisys.db")
     #DBM.delete_database_file()
     DBM.connect()
 
@@ -48,10 +48,10 @@ def init():
 
 
 if __name__ == "__main__":
-    main()
-    #DBM = init()
+    #main()
+    DBM = init()
 
 
     #DBM.delete_database_file()
 
-    #DBM.menu()
+    DBM.menu()

@@ -51,7 +51,7 @@ class AppMQTT:
         try:
             self.client.connect(BROKER, PORTA, 60)
             self.client.loop_start()
-            self.logga("🔌 Sto connettendo al broker...")
+            self.logga("Sto connettendo al broker...")
         except Exception as e:
             self.logga("errore connect: " + str(e))
 
@@ -64,7 +64,7 @@ class AppMQTT:
 
         self.client.publish(topic, msg)
         ts = time.strftime("%H:%M:%S")
-        self.logga(f"➡️ [{ts}] COMANDO INVIATO: {topic} -> {msg}")
+        self.logga(f"[{ts}] COMANDO INVIATO: {topic} -> {msg}")
 
     # ---------- CALLBACK MQTT ----------
     def on_connect(self, client, userdata, flags, rc):

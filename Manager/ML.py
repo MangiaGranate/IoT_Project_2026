@@ -3,8 +3,11 @@ import math
 import time
 import paho.mqtt.client as mqtt
 from datetime import datetime
-from IoT_Project_2026.Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
-from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
+#from IoT_Project_2026.Manager.mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+#from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
+
+from mqtt.mqtt_conf_params_debugger import MqttConfigurationParameters as MqttConf
+from dataAnalisys.database_manager import DatabaseManager
 
 def clamp(x, minimo=0.0, massimo=1.0):
     """Limita x nell'intervallo [minimo, massimo]."""
@@ -84,6 +87,9 @@ class LongTermML:
 
     def _match_model(self, table_name):
         low = table_name.lower()
+        if "_avg_" not in low:
+            return None, None
+        
         for sensor_name, cfg in self.sensor_model.items():
             for k in cfg["keys"]:
                 if k.lower() in low:
@@ -120,7 +126,7 @@ class LongTermML:
 
             rows = self.db.get_all_data_ordered(table)  # deve restituire [(time, value), ...]
 
-            # ✅ Normalizzo: (datetime_str, value) -> (epoch, float)
+            #Normalizzo: (datetime_str, value) -> (epoch, float)
             norm_rows = []
             for ts, val in rows:
                 try:

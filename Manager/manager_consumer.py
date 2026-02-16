@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from typing import Any, List
-from IoT_Project_2026.Manager.dataAnalisys.database_manager import DatabaseManager
+from Manager.dataAnalisys.database_manager import DatabaseManager
 
 
 
@@ -14,8 +14,7 @@ class ManagerConsumer:
         self.passwd=passwd
         self.client=None
         self.database=DatabaseManager(database_name)
-        self.path_contatore = r"C:\Users\Utente\Desktop\nuovacartella\IoT_Project_2026\counter.json"
-        self.contatore_dati = 0
+
 
         try:
             self.database.connect()     #collegarsi al database quando creo l'istanza
